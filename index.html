@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Portal | eLearning Group Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="login" id="login" hidden><div class="lbox">
+<div class="logo"><img src="/logo.jpg" alt="e-Learning Group Institute logo"></div>
+<div class="tabs"><button id="t-s" aria-pressed="true">Student login</button><button id="t-a" aria-pressed="false">Admin login</button></div>
+<div id="p-s"><label class="fld"><span>Student ID</span><input id="sid" autocomplete="off" placeholder="EGI/2024/02486"></label>
+<label class="fld"><span>Access code</span><input id="scode" autocomplete="off" placeholder="Code from your administrator"></label>
+<button class="btn full" id="sgo">Sign in as student</button></div>
+<div id="p-a" hidden><p style="margin-top:0">Enter the administrator password to manage students, grades and announcements.</p><label class="fld"><span>Admin password</span><input id="apw" type="password" autocomplete="off"></label><button class="btn full" id="ago">Sign in as admin</button></div>
+<div class="err" id="err" role="alert"></div>
+<div class="note" id="lnote"></div>
+</div></div>
+<div class="shell" id="app" hidden>
+<aside id="side"><div class="logo"><img src="/logo.jpg" alt="e-Learning Group Institute logo"></div><nav id="nav"></nav>
+<div class="help"><b>Need Help?</b>If you have any questions or need support, contact your administrator.</div></aside>
+<div class="scrim" id="scrim"></div>
+<div class="main">
+<div class="top"><button class="burger" id="burger" aria-label="Open menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><h1 id="ttl">Student Portal</h1><span class="date" id="date"></span><button id="bell" aria-label="Announcements"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17V11a6 6 0 0112 0v6l2 2H4zM10 21h4"/></svg><span class="badge" id="badge"></span></button><button id="out">Logout</button></div>
+<div class="content" id="view"></div>
+<footer><span>© 2026 eLearning Group Institute. All Rights Reserved.</span><span>Privacy Policy &nbsp;|&nbsp; Terms of Use</span></footer>
+</div></div>
+<script src="/app.js" defer></script>
+</body>
+</html>
