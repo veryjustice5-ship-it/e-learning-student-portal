@@ -75,3 +75,7 @@ td select{background:var(--sf);border:1px solid var(--line);border-radius:6px;pa
 .flash{background:color-mix(in srgb,var(--or) 14%,var(--sf));border:1px solid var(--line);border-left:4px solid var(--or);border-radius:8px;padding:10px 12px;margin-bottom:16px;font-weight:600;word-break:break-word}
 .bt{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .logo{background:#fff;border-radius:10px;padding:10px 12px;margin:0 4px 20px}.logo img{display:block;width:100%;height:auto}.lbox .logo{background:none;padding:0;margin:0 auto 16px;max-width:200px}
+.act-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 16px}
+.btn-icon{display:inline-flex;align-items:center;gap:6px}
+.btn-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media print{aside,.top,footer,.burger,.scrim,.no-print{display:none!important}.main{margin-left:0!important;width:100%!important}.content{padding:0!important;max-width:100%!important}body{background:#fff!important;color:#000!important}.card{border:1px solid #ccc!important;box-shadow:none!important;break-inside:avoid;margin-bottom:12px!important}.cols{display:block!important}}

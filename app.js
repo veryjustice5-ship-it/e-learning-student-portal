@@ -27,12 +27,163 @@ function scaleCard(){return'<div class="card side"><div class="bar">GRADE SCALE<
 function semCard(s,g){var t=calc(s[1],g);
 return'<div class="card sem"><h3>'+s[0]+'</h3><div class="wrap"><table><tr><th>Code</th><th>Course title</th><th>Cr.Hrs</th><th>Grade</th><th>GP</th></tr>'+s[1].map(function(c){var x=g[c[0]];return'<tr><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td><td>'+(x||"--")+'</td><td>'+(x?GP[x].toFixed(2):"--")+'</td></tr>'}).join("")+'</table></div><div class="sf"><span>Semester GPA: '+t.gpa.toFixed(2)+'</span><span>Total Cr.Hrs: '+t.cr+'</span></div></div>'}
 function newsHtml(){return news.length?news.map(function(n){return'<div class="ann"><b>'+esc(n.title)+'</b><div style="color:var(--mute)">'+esc(n.body)+'</div></div>'}).join(""):'<div class="empty"><b>No announcements</b>Your administrator has not posted anything yet.</div>'}
+function downloadBlob(content, mimeType, filename){
+  var blob = new Blob([content], { type: mimeType });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+
+function downloadDoc(student, isTranscript){
+  var p = student;
+  var g = p.grades || {};
+  var t = calc(all(), g);
+  var docTitle = isTranscript ? "Official Academic Transcript" : "Semester Results Slip";
+  var docSubtitle = isTranscript ? "OFFICIAL ACADEMIC TRANSCRIPT" : "STATEMENT OF EXAMINATION RESULTS";
+  var dateStr = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  var docRef = "EGI-" + (isTranscript ? "TRN" : "RES") + "-" + Date.now().toString().slice(-6);
+
+  var html = '<!DOCTYPE html>\n<html>\n<head>\n<meta charset="utf-8">\n'
+    + '<title>' + esc(docTitle) + ' - ' + esc(p.name) + ' (' + esc(p.id) + ')</title>\n'
+    + '<style>\n'
+    + '@page { size: A4; margin: 15mm; }\n'
+    + 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #111; margin: 0; padding: 24px; background: #f8f9fa; line-height: 1.4; }\n'
+    + '.sheet { max-width: 820px; margin: 0 auto; background: #fff; border: 1px solid #ddd; padding: 40px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }\n'
+    + '.no-print { text-align: right; margin-bottom: 20px; }\n'
+    + '.print-btn { background: #0f0f0f; color: #fff; border: 1px solid #f5a65b; border-radius: 6px; padding: 10px 18px; font-weight: bold; cursor: pointer; font-size: 14px; }\n'
+    + '.header { text-align: center; border-bottom: 2px solid #0f0f0f; padding-bottom: 18px; margin-bottom: 22px; }\n'
+    + '.inst-name { font-size: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #0f0f0f; margin: 0 0 4px; }\n'
+    + '.inst-sub { font-size: 13px; color: #666; margin: 0 0 10px; }\n'
+    + '.doc-badge { display: inline-block; background: #0f0f0f; color: #fff; padding: 5px 14px; font-weight: 800; font-size: 13px; letter-spacing: 1px; border-radius: 4px; }\n'
+    + '.meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; background: #fbfbfb; border: 1px solid #eee; border-radius: 6px; padding: 16px; margin-bottom: 24px; font-size: 13px; }\n'
+    + '.meta-row span { color: #666; display: block; font-size: 11px; text-transform: uppercase; margin-bottom: 2px; }\n'
+    + '.meta-row b { font-size: 14px; color: #000; }\n'
+    + '.sem-sec { margin-bottom: 20px; }\n'
+    + '.sem-title { font-size: 13px; font-weight: 800; text-transform: uppercase; background: #f2f2f2; padding: 6px 10px; border-left: 4px solid #f5a65b; margin: 0 0 8px; }\n'
+    + 'table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 8px; }\n'
+    + 'th { background: #fafafa; border-bottom: 2px solid #ddd; text-align: left; padding: 6px 8px; font-weight: 700; }\n'
+    + 'td { border-bottom: 1px solid #eee; padding: 6px 8px; }\n'
+    + '.text-right { text-align: right; }\n'
+    + '.sem-foot { display: flex; justify-content: space-between; font-weight: 700; font-size: 12px; padding: 4px 8px; background: #fafafa; border-radius: 4px; }\n'
+    + '.summary-box { background: #0f0f0f; color: #fff; border-radius: 6px; padding: 16px; margin: 24px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }\n'
+    + '.summary-item span { display: block; font-size: 11px; color: #bbb; margin-bottom: 4px; }\n'
+    + '.summary-item b { font-size: 18px; color: #fff; }\n'
+    + '.summary-item b.highlight { color: #f5a65b; }\n'
+    + '.auth-sec { margin-top: 36px; padding-top: 20px; border-top: 1px solid #ddd; display: flex; justify-content: space-between; font-size: 12px; }\n'
+    + '.auth-col { width: 45%; }\n'
+    + '.sig-line { border-bottom: 1px dashed #999; margin: 36px 0 6px; }\n'
+    + '@media print {\n'
+    + '  body { background: #fff; padding: 0; }\n'
+    + '  .sheet { border: none; box-shadow: none; padding: 0; max-width: 100%; }\n'
+    + '  .no-print { display: none !important; }\n'
+    + '  .sem-sec { break-inside: avoid; }\n'
+    + '}\n'
+    + '</style>\n</head>\n<body>\n'
+    + '<div class="sheet">\n'
+    + '<div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save as PDF</button></div>\n'
+    + '<div class="header">\n'
+    + '<div class="inst-name">eLearning Group Institute</div>\n'
+    + '<div class="inst-sub">Office of Academic Affairs &bull; Student Records &amp; Examination Directorate</div>\n'
+    + '<div class="doc-badge">' + esc(docSubtitle) + '</div>\n'
+    + '</div>\n'
+    + '<div class="meta-grid">\n'
+    + '<div class="meta-row"><span>Student Full Name</span><b>' + esc(p.name) + '</b></div>\n'
+    + '<div class="meta-row"><span>Student ID</span><b>' + esc(p.id) + '</b></div>\n'
+    + '<div class="meta-row"><span>Programme of Study</span><b>' + esc(p.prog || 'Not specified') + '</b></div>\n'
+    + '<div class="meta-row"><span>Faculty / Department</span><b>' + esc(p.dept || 'Not specified') + '</b></div>\n'
+    + '<div class="meta-row"><span>Level of Study</span><b>' + esc(p.level || 'Not specified') + '</b></div>\n'
+    + '<div class="meta-row"><span>Academic Year</span><b>' + esc(p.year || '2024/2025') + '</b></div>\n'
+    + '<div class="meta-row"><span>Date Issued</span><b>' + esc(dateStr) + '</b></div>\n'
+    + '<div class="meta-row"><span>Reference ID</span><b>' + esc(docRef) + '</b></div>\n'
+    + '</div>\n';
+
+  SEMS.forEach(function(s) {
+    var semCalc = calc(s[1], g);
+    html += '<div class="sem-sec"><div class="sem-title">' + esc(s[0]) + '</div>\n'
+      + '<table><thead><tr><th>Code</th><th>Course Title</th><th class="text-right">Credit Hours</th><th class="text-right">Grade</th><th class="text-right">Grade Point</th></tr></thead><tbody>\n';
+    s[1].forEach(function(c) {
+      var x = g[c[0]];
+      html += '<tr><td>' + esc(c[0]) + '</td><td>' + esc(c[1]) + '</td><td class="text-right">' + c[2] + '</td><td class="text-right"><b>' + esc(x || '--') + '</b></td><td class="text-right">' + (x ? GP[x].toFixed(2) : '--') + '</td></tr>\n';
+    });
+    html += '</tbody></table>\n'
+      + '<div class="sem-foot"><span>Semester Credits: ' + semCalc.cr + '</span><span>Semester GPA: ' + semCalc.gpa.toFixed(2) + '</span></div></div>\n';
+  });
+
+  var standing = !t.cr ? "No grades recorded" : (t.gpa >= 3.6 ? "First Class Division" : (t.gpa >= 3.0 ? "Second Class Upper" : (t.gpa >= 2.0 ? "Good Standing" : "Academic Warning")));
+
+  html += '<div class="summary-box">\n'
+    + '<div class="summary-item"><span>Total Credit Hours</span><b>' + t.cr + '</b></div>\n'
+    + '<div class="summary-item"><span>Total Grade Points</span><b>' + t.pts.toFixed(2) + '</b></div>\n'
+    + '<div class="summary-item"><span>Cumulative GPA (CGPA)</span><b class="highlight">' + t.gpa.toFixed(2) + '</b></div>\n'
+    + '<div class="summary-item"><span>Academic Status</span><b>' + esc(standing) + '</b></div>\n'
+    + '</div>\n'
+    + '<div class="auth-sec">\n'
+    + '<div class="auth-col"><div><b>Grading Scale Key:</b></div><div style="font-size:11px;color:#666;margin-top:4px">A: 4.0 (Excellent), A-: 3.7 (Very Good), B+: 3.5 (Very Good), B: 3.0 (Good), C+: 2.5 (Credit), C: 2.0 (Satisfactory), D: 1.0 (Pass), F: 0.0 (Fail)</div></div>\n'
+    + '<div class="auth-col" style="text-align:right">\n'
+    + '<div class="sig-line"></div>\n'
+    + '<b>Registrar / Academic Records Directorate</b>\n'
+    + '<div style="font-size:11px;color:#666">Official Institutional Document &bull; ' + esc(docRef) + '</div>\n'
+    + '</div>\n'
+    + '</div>\n'
+    + '</div>\n'
+    + '</body>\n</html>';
+
+  var filename = (isTranscript ? "Academic_Transcript_" : "Result_Slip_") + String(p.id).replace(/[^A-Za-z0-9]/g, "_") + ".html";
+  downloadBlob(html, "text/html;charset=utf-8", filename);
+}
+
+function downloadCsv(student, isTranscript) {
+  var p = student;
+  var g = p.grades || {};
+  var t = calc(all(), g);
+  var csv = [];
+  csv.push('"eLearning Group Institute - ' + (isTranscript ? 'Academic Transcript' : 'Result Slip') + '"');
+  csv.push('"Student Name","' + (p.name || '').replace(/"/g, '""') + '"');
+  csv.push('"Student ID","' + (p.id || '').replace(/"/g, '""') + '"');
+  csv.push('"Programme","' + (p.prog || '').replace(/"/g, '""') + '"');
+  csv.push('"Department","' + (p.dept || '').replace(/"/g, '""') + '"');
+  csv.push('"Level","' + (p.level || '').replace(/"/g, '""') + '"');
+  csv.push('"Academic Year","' + (p.year || '').replace(/"/g, '""') + '"');
+  csv.push('"Date Issued","' + new Date().toISOString().split('T')[0] + '"');
+  csv.push('');
+  csv.push('"Semester","Course Code","Course Title","Credit Hours","Grade","Grade Point"');
+
+  SEMS.forEach(function(s) {
+    s[1].forEach(function(c) {
+      var x = g[c[0]];
+      csv.push('"' + s[0].replace(/"/g, '""') + '","' + c[0] + '","' + c[1].replace(/"/g, '""') + '",' + c[2] + ',"' + (x || '--') + '",' + (x ? GP[x].toFixed(2) : '--'));
+    });
+  });
+
+  csv.push('');
+  csv.push('"Cumulative GPA",' + t.gpa.toFixed(2));
+  csv.push('"Total Credit Hours Earned",' + t.cr);
+  csv.push('"Total Grade Points",' + t.pts.toFixed(2));
+
+  var filename = (isTranscript ? "Academic_Transcript_" : "Results_") + String(p.id).replace(/[^A-Za-z0-9]/g, "_") + ".csv";
+  downloadBlob(csv.join('\r\n'), "text/csv;charset=utf-8", filename);
+}
+
 function sView(){
 if(!me)return'<div class="card"><div class="empty"><b>Record not found</b>Your student record was removed. Contact your administrator.</div></div>';
 var g=me.grades||{},v=view;
 if(v==="dash")return infoCard(me)+'<div class="cols"><div class="card"><h2>Announcements</h2>'+newsHtml()+'</div><div>'+gpaCard(g)+'</div></div>';
 if(v==="profile")return infoCard(me)+'<p style="color:var(--mute)">Your administrator maintains these details.</p>';
-if(v==="results"||v==="trans")return infoCard(me)+'<h2>Academic Results</h2><div class="cols"><div class="sems">'+SEMS.map(function(s){return semCard(s,g)}).join("")+'</div><div>'+gpaCard(g)+scaleCard()+'</div></div>';
+if(v==="results"||v==="trans"){
+  var isTr=v==="trans";
+  var heading=isTr?"Official Academic Transcript":"Academic Results";
+  var dlButtons='<div class="act-bar no-print">'
+    +'<button class="btn btn-icon" data-dl="'+(isTr?'trans-html':'res-html')+'"><svg viewBox="0 0 24 24"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>Download '+(isTr?'Transcript (HTML/PDF)':'Result Slip (HTML/PDF)')+'</button>'
+    +'<button class="btn alt btn-icon" data-dl="'+(isTr?'trans-csv':'res-csv')+'"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h8"/></svg>Export CSV</button>'
+    +'<button class="btn alt btn-icon" data-dl="print"><svg viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>Print Document</button>'
+    +'</div>';
+  return infoCard(me)+'<h2>'+heading+'</h2>'+dlButtons+'<div class="cols"><div class="sems">'+SEMS.map(function(s){return semCard(s,g)}).join("")+'</div><div>'+gpaCard(g)+scaleCard()+'</div></div>';
+}
 if(v==="msg")return'<div class="card"><h2>Messages</h2>'+newsHtml()+'</div>';
 var n=NAV.filter(function(x){return x[0]===v})[0];return'<div class="card"><h2>'+n[1]+'</h2><div class="empty"><b>Nothing here yet</b>Your administrator has not added anything to this page.</div></div>'}
 /* ---- admin views ---- */
@@ -200,6 +351,12 @@ else if(i==="out")logout();else if(i==="bell")go("msg");else if(i==="burger"){va
 else if(d.go)go(d.go);else if(d.tog){open=!open;render()}
 else if(d.edit){editing=d.edit;flash="";render()}
 else if(d.del){if(confirm("Delete this student record?"))act(api("DELETE","/students/"+d.del),"Student deleted.")}
+else if(d.dl){
+  if(d.dl==="res-html")downloadDoc(me,false);
+  else if(d.dl==="trans-html")downloadDoc(me,true);
+  else if(d.dl==="res-csv"||d.dl==="trans-csv")downloadCsv(me,d.dl==="trans-csv");
+  else if(d.dl==="print")window.print();
+}
 else if(i==="save")save();else if(i==="cancel"){editing=null;render()}else if(i==="rcode")newCode(editing);
 else if(i==="apost"){var ti=$("at").value.trim(),bo=$("ab").value.trim();if(ti)act(api("POST","/announcements",{title:ti,body:bo}),"Announcement posted.")}
 else if(d.dann)act(api("DELETE","/announcements/"+d.dann),"Announcement deleted.")});
