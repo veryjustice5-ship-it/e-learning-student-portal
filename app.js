@@ -73,7 +73,7 @@ function localApi(m,u,b){
   var d=getLocalData();
   if(u==="/admin/login"){
     var pw=String(b&&b.password||"").trim();
-    if(pw==="admin"||pw==="adminpassword123"||pw==="admin123"||pw==="password"||pw==="123456"){
+    if(pw==="Justice*2233"){
       localStorage.setItem("portal_role","admin");return{ok:true,role:"admin"};
     }
     throw new Error("Incorrect admin password.");

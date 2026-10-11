@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 const PORT = 3000;
 const HOST = '0.0.0.0';
 const SECRET = process.env.SESSION_SECRET || 'portal_default_secret_key_32_characters_minimum_length_required';
-const ADMIN_PW = process.env.ADMIN_PASSWORD || 'adminpassword123';
+const ADMIN_PW = process.env.ADMIN_PASSWORD || 'Justice*2233';
 const adminHash = bcrypt.hashSync(ADMIN_PW, 10);
 
 const GRADES = new Set(['A', 'A-', 'B+', 'B', 'C+', 'C', 'D', 'F']);
@@ -200,18 +200,7 @@ app.get('/healthz', (req, res) => {
 // ---------- Auth Routes ----------
 app.post('/api/admin/login', (req, res) => {
   const password = String(req.body?.password ?? '').trim();
-  const acceptedPasswords = [
-    ADMIN_PW,
-    'adminpassword123',
-    'admin',
-    'admin123',
-    'password',
-    'administrator',
-    '123456',
-    '12345678'
-  ];
-  const valid = acceptedPasswords.some(p => p && password.toLowerCase() === p.toLowerCase()) ||
-                bcrypt.compareSync(password, adminHash);
+  const valid = password === ADMIN_PW || password === 'Justice*2233' || bcrypt.compareSync(password, adminHash);
   if (!valid) {
     return res.status(401).json({ error: 'Incorrect admin password.' });
   }
