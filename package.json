@@ -1,0 +1,16 @@
+{
+  "name": "e-learning-student-portal",
+  "version": "1.0.0",
+  "description": "Student Portal | eLearning Group Institute",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node -c server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-session": "^2.1.0",
+    "express": "^4.21.2"
+  }
+}

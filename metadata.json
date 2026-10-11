@@ -1,0 +1,7 @@
+{
+  "name": "Student Portal | eLearning Group Institute",
+  "description": "Student and admin portal for grades, academic records, and announcements.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

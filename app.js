@@ -49,17 +49,17 @@ return(flash?'<div class="flash">'+esc(flash)+'</div>':"")+'<div class="card"><h
 +'<div class="bt"><button class="btn" id="save">Save student</button><button class="btn alt" id="cancel">Cancel</button>'+(neu?'':'<button class="btn alt" id="rcode">Reset access code</button>')+'</div>'}
 
 /* ---- api and session ---- */
-async function api(m,u,b){var r=await fetch("/api"+u,{method:m,headers:b?{"Content-Type":"application/json"}:{},body:b?JSON.stringify(b):undefined,credentials:"same-origin"});var j=null;try{j=await r.json()}catch(e){}if(!r.ok)throw new Error((j&&j.error)||"Request failed");return j}
+async function api(m,u,b){var hd=b?{"Content-Type":"application/json"}:{};var tok=localStorage.getItem("portal_token");if(tok)hd["Authorization"]="Bearer "+tok;var r=await fetch("/api"+u,{method:m,headers:hd,body:b?JSON.stringify(b):undefined,credentials:"same-origin"});var j=null;try{j=await r.json()}catch(e){}if(!r.ok){if(r.status===401)localStorage.removeItem("portal_token");throw new Error((j&&j.error)||"Request failed")}if(j&&j.token)localStorage.setItem("portal_token",j.token);return j}
 function tab(a){$("p-s").hidden=a;$("p-a").hidden=!a;$("t-s").setAttribute("aria-pressed",!a);$("t-a").setAttribute("aria-pressed",a);msg("")}
 async function sLogin(){msg("");var id=$("sid").value.trim(),c=$("scode").value.trim();if(!id||!c)return msg("Enter your student ID and access code.");
-try{await api("POST","/student/login",{id:id,code:c});$("scode").value="";await boot()}catch(e){msg(e.message)}}
+try{var r=await api("POST","/student/login",{id:id,code:c});if(r&&r.token)localStorage.setItem("portal_token",r.token);$("scode").value="";await boot()}catch(e){msg(e.message)}}
 async function aLogin(){msg("");if(!$("apw").value)return msg("Enter the administrator password.");
-try{await api("POST","/admin/login",{password:$("apw").value});$("apw").value="";await boot()}catch(e){msg(e.message)}}
+try{var r=await api("POST","/admin/login",{password:$("apw").value});if(r&&r.token)localStorage.setItem("portal_token",r.token);$("apw").value="";await boot()}catch(e){msg(e.message)}}
 async function boot(){var m=await api("GET","/me");role=m.role;sid=m.sid;view=role==="admin"?"students":"dash";editing=null;flash="";await refresh();clearInterval(timer);timer=setInterval(refresh,30000)}
 var timer;
-async function refresh(){try{if(role==="admin")stu=(await api("GET","/students")).students;else if(role==="student")me=(await api("GET","/student")).student;if(role)news=(await api("GET","/announcements")).items}catch(e){if(/session/i.test(e.message)){role=null;clearInterval(timer);msg("Your session has expired. Please sign in again.")}}soft()}
+async function refresh(){try{if(role==="admin")stu=(await api("GET","/students")).students;else if(role==="student")me=(await api("GET","/student")).student;if(role)news=(await api("GET","/announcements")).items}catch(e){if(/session/i.test(e.message)){role=null;clearInterval(timer);localStorage.removeItem("portal_token");msg("Your session has expired. Please sign in again.")}}soft()}
 function soft(){var a=document.activeElement;if(role&&a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;if(role==="admin"&&editing!==null)return;render()}
-async function logout(){try{await api("POST","/logout")}catch(e){}clearInterval(timer);role=null;sid=null;me=null;stu=[];news=[];editing=null;flash="";render()}
+async function logout(){try{await api("POST","/logout")}catch(e){}localStorage.removeItem("portal_token");clearInterval(timer);role=null;sid=null;me=null;stu=[];news=[];editing=null;flash="";render()}
 function act(p,ok){return p.then(function(){flash=ok;return refresh()}).catch(function(e){flash="Failed: "+e.message;render()})}
 async function save(){var p={};document.querySelectorAll("[data-p]").forEach(function(i){p[i.dataset.p]=i.value.trim()});
 var neu=editing==="new",o=neu?null:stuBy(editing);if(!neu)p.id=o.id;
