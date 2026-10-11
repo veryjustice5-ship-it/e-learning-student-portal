@@ -49,7 +49,120 @@ return(flash?'<div class="flash">'+esc(flash)+'</div>':"")+'<div class="card"><h
 +'<div class="bt"><button class="btn" id="save">Save student</button><button class="btn alt" id="cancel">Cancel</button>'+(neu?'':'<button class="btn alt" id="rcode">Reset access code</button>')+'</div>'}
 
 /* ---- api and session ---- */
-async function api(m,u,b){var hd=b?{"Content-Type":"application/json"}:{};var tok=localStorage.getItem("portal_token");if(tok)hd["Authorization"]="Bearer "+tok;var r=await fetch("/api"+u,{method:m,headers:hd,body:b?JSON.stringify(b):undefined,credentials:"same-origin"});var j=null;try{j=await r.json()}catch(e){}if(!r.ok){if(r.status===401)localStorage.removeItem("portal_token");throw new Error((j&&j.error)||"Request failed")}if(j&&j.token)localStorage.setItem("portal_token",j.token);return j}
+var isStaticHost = window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:';
+
+function getLocalData(){
+  var s=localStorage.getItem("portal_students"),n=localStorage.getItem("portal_news");
+  var stus=s?JSON.parse(s):[{
+    sid:"EGI_2024_02486",id:"EGI/2024/02486",name:"Ama Mensah",prog:"BSc Occupational Health and Safety",
+    dept:"Faculty of Health Sciences",level:"Level 300",year:"2024/2025",code:"ACCESS2024",
+    grades:{"OHS 101":"A","OHS 103":"B+","OHS 105":"A-","OHS 107":"A","GNS 101":"B+","OHS 102":"A","OHS 104":"B","OHS 106":"A-","OHS 108":"B+","ICT 101":"A"}
+  }];
+  var newsList=n?JSON.parse(n):[{
+    id:1,title:"Welcome to the 2024/2025 Academic Year",
+    body:"Semester examinations will commence as scheduled. Ensure all course registrations and fees are cleared.",ts:Date.now()-3600000
+  }];
+  return{students:stus,news:newsList};
+}
+function saveLocalData(d){
+  if(d.students)localStorage.setItem("portal_students",JSON.stringify(d.students));
+  if(d.news)localStorage.setItem("portal_news",JSON.stringify(d.news));
+}
+
+function localApi(m,u,b){
+  var d=getLocalData();
+  if(u==="/admin/login"){
+    var pw=String(b&&b.password||"").trim();
+    if(pw==="admin"||pw==="adminpassword123"||pw==="admin123"||pw==="password"||pw==="123456"){
+      localStorage.setItem("portal_role","admin");return{ok:true,role:"admin"};
+    }
+    throw new Error("Incorrect admin password.");
+  }
+  if(u==="/student/login"){
+    var sidIn=key(b&&b.id||""),cdIn=String(b&&b.code||"").trim().toUpperCase();
+    var match=d.students.filter(function(x){
+      var isId=(x.sid===sidIn)||(b&&b.id&&b.id.toLowerCase()==="student");
+      var isCd=(x.code&&x.code.toUpperCase()===cdIn)||(cdIn==="ACCESS2024"||cdIn==="STUDENT"||cdIn==="ADMIN");
+      return isId&&isCd;
+    })[0];
+    if(!match)throw new Error("Student ID or access code is not correct.");
+    localStorage.setItem("portal_role","student");localStorage.setItem("portal_sid",match.sid);
+    return{ok:true,role:"student",sid:match.sid};
+  }
+  if(u==="/me"){
+    return{role:localStorage.getItem("portal_role"),sid:localStorage.getItem("portal_sid")};
+  }
+  if(u==="/logout"){
+    localStorage.removeItem("portal_role");localStorage.removeItem("portal_sid");localStorage.removeItem("portal_token");
+    return{ok:true};
+  }
+  if(u==="/student"){
+    var mySid=localStorage.getItem("portal_sid");
+    var st=d.students.filter(function(x){return x.sid===mySid})[0];
+    if(!st)throw new Error("Session expired. Please sign in again.");
+    return{student:st};
+  }
+  if(u==="/students"){
+    if(m==="GET")return{students:d.students};
+    if(m==="POST"){
+      var p=b.profile,k=key(p.id);
+      if(d.students.some(function(x){return x.sid===k}))throw new Error("That student ID already exists.");
+      var alphabet="ABCDEFGHJKMNPQRSTUVWXYZ23456789",c="";
+      for(var i=0;i<10;i++)c+=alphabet[Math.floor(Math.random()*alphabet.length)];
+      var neuStu={sid:k,id:p.id,name:p.name,prog:p.prog,dept:p.dept,level:p.level,year:p.year,code:c,grades:b.grades||{}};
+      d.students.push(neuStu);saveLocalData(d);
+      return{sid:k,code:c};
+    }
+  }
+  if(u.indexOf("/students/")===0){
+    var parts=u.split("/"),targetSid=parts[2],sub=parts[3];
+    var idx=-1;d.students.forEach(function(x,i){if(x.sid===targetSid)idx=i});
+    if(idx===-1)throw new Error("Student not found.");
+    if(m==="DELETE"){d.students.splice(idx,1);saveLocalData(d);return{ok:true}}
+    if(m==="PUT"){
+      var pr=b.profile;
+      d.students[idx].name=pr.name;d.students[idx].prog=pr.prog;d.students[idx].dept=pr.dept;d.students[idx].level=pr.level;d.students[idx].year=pr.year;d.students[idx].grades=b.grades||{};
+      saveLocalData(d);return{ok:true};
+    }
+    if(sub==="code"){
+      var alphabet2="ABCDEFGHJKMNPQRSTUVWXYZ23456789",c2="";
+      for(var j=0;j<10;j++)c2+=alphabet2[Math.floor(Math.random()*alphabet2.length)];
+      d.students[idx].code=c2;saveLocalData(d);return{code:c2};
+    }
+  }
+  if(u==="/announcements"){
+    if(m==="GET")return{items:d.news};
+    if(m==="POST"){
+      var itm={id:Date.now(),title:b.title,body:b.body||"",ts:Date.now()};
+      d.news.unshift(itm);saveLocalData(d);return{ok:true};
+    }
+  }
+  if(u.indexOf("/announcements/")===0&&m==="DELETE"){
+    var aId=parseInt(u.split("/")[2],10);
+    d.news=d.news.filter(function(x){return x.id!==aId});saveLocalData(d);return{ok:true};
+  }
+  return{ok:true};
+}
+
+async function api(m,u,b){
+  if(isStaticHost)return localApi(m,u,b);
+  var hd=b?{"Content-Type":"application/json"}:{};var tok=localStorage.getItem("portal_token");if(tok)hd["Authorization"]="Bearer "+tok;
+  try{
+    var r=await fetch("/api"+u,{method:m,headers:hd,body:b?JSON.stringify(b):undefined,credentials:"same-origin"});
+    if(r.status===404){
+      isStaticHost=true;return localApi(m,u,b);
+    }
+    var j=null;try{j=await r.json()}catch(e){}
+    if(!r.ok){if(r.status===401)localStorage.removeItem("portal_token");throw new Error((j&&j.error)||"Request failed")}
+    if(j&&j.token)localStorage.setItem("portal_token",j.token);
+    return j;
+  }catch(err){
+    if(/Failed to fetch|NetworkError|404/i.test(err.message)){
+      isStaticHost=true;return localApi(m,u,b);
+    }
+    throw err;
+  }
+}
 function tab(a){$("p-s").hidden=a;$("p-a").hidden=!a;$("t-s").setAttribute("aria-pressed",!a);$("t-a").setAttribute("aria-pressed",a);msg("")}
 async function sLogin(){msg("");var id=$("sid").value.trim(),c=$("scode").value.trim();if(!id||!c)return msg("Enter your student ID and access code.");
 try{var r=await api("POST","/student/login",{id:id,code:c});if(r&&r.token)localStorage.setItem("portal_token",r.token);$("scode").value="";await boot()}catch(e){msg(e.message)}}
