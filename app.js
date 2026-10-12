@@ -1,10 +1,82 @@
 'use strict';
-var SEMS=[["First Year - Semester 1",[["OHS 101","Introduction to OHS",3,"B+"],["OHS 103","Hazard Identification and Risk Assessment",3,"B"],["OHS 105","Safety Management Principles",3,"B+"],["OHS 107","Communication Skills",2,"A-"],["GNS 101","Use of English",2,"B"]]],
-["First Year - Semester 2",[["OHS 102","Occupational Hygiene",3,"B+"],["OHS 104","Ergonomics",3,"B"],["OHS 106","Workplace Safety and Health Regulations",3,"B+"],["OHS 108","Environmental Health and Safety",3,"B"],["ICT 101","Introduction to Information Technology",2,"A-"]]],
-["First Year - Semester 3",[["OHS 109","Fire Safety and Emergency Response",3,"B+"],["OHS 111","Industrial Safety Management",3,"B"],["OHS 113","Health Promotion at Workplace",3,"B+"],["OHS 115","Safety Legislation and Compliance",3,"B"],["GNS 102","Entrepreneurship",2,"A-"]]],
-["Third Year - Semester 1",[["OHS 301","Occupational Health Surveillance",3,"B+"],["OHS 303","Safety Auditing and Inspection",3,"B"],["OHS 305","Occupational Toxicology",3,"B+"],["OHS 307","Project Management in OHS",3,"B"],["OHS 309","Research Methods",2,"A-"]]],
-["Third Year - Semester 2",[["OHS 302","Risk Management Strategies",3,"B+"],["OHS 304","Disaster Management and Preparedness",3,"B"],["OHS 306","Occupational Health Law",3,"B+"],["OHS 308","Advanced Ergonomics",3,"B"],["OHS 310","Seminar in OHS",2,"A-"]]],
-["Third Year - Semester 3",[["OHS 311","Strategic Safety Management",3,"B+"],["OHS 313","Integrated Management Systems",3,"B"],["OHS 315","Occupational Health Economics",3,"B+"],["OHS 317","Applied Research Project",3,"B"],["OHS 319","Professional Practice in OHS",2,"A-"]]]];
+var SEMS=[
+["First Year - Semester 1",[
+  ["AIF 101","AI Foundations",3,"A"],
+  ["AIF 102","Tool vs. Automation",3,"A-"],
+  ["AIF 103","The Personal Assistant",3,"B+"],
+  ["AIF 104","The AI Operating System",3,"A"],
+  ["AIF 105","The CREATE Framework",3,"B+"]
+]],
+["First Year - Semester 2",[
+  ["AIF 106","Advanced Prompts",3,"--"],
+  ["AIF 107","Hunting Bottlenecks",3,"--"],
+  ["AIF 108","The Brain and the Body",3,"--"],
+  ["AIF 109","APIs and Webhooks",3,"--"],
+  ["AIF 110","The Builder Blueprint",3,"--"]
+]]
+];
+var COURSE_OUTLINES={
+  "AIF 101": [
+    "Understand how AI generates predictions rather than calculations.",
+    "Distinguish prediction-based systems from fixed-rule systems.",
+    "Adopt the Builder mindset versus the Consumer mindset.",
+    "Practice giving AI better context for better outputs."
+  ],
+  "AIF 102": [
+    "Understand the difference between a tool and an automation.",
+    "Learn the Trigger–Process–Result automation framework.",
+    "Identify real-world automation opportunities.",
+    "Build a basic automation flow structure."
+  ],
+  "AIF 103": [
+    "Identify daily friction points AI can solve.",
+    "Learn to give AI proper context for personal tasks.",
+    "Build the Context–Task–Format prompt structure.",
+    "Develop the habit of using AI daily."
+  ],
+  "AIF 104": [
+    "Understand which tasks belong to humans versus AI.",
+    "Learn the Strategize–Execute–Review delegation flow.",
+    "Practise delegating routine work to AI.",
+    "Identify personal bottlenecks to automate."
+  ],
+  "AIF 105": [
+    "Learn the six components: Context, Request, Explanation, Action, Tone, Extras.",
+    "Identify missing elements in weak prompts.",
+    "Practise applying CREATE to real requests.",
+    "Memorize the framework for future use."
+  ],
+  "AIF 106": [
+    "Understand Few-Shot examples and Constraints.",
+    "Learn to prevent AI hallucinations using guardrails.",
+    "Build the Anti-Hallucination Guardrail.",
+    "Define custom constraints for business use."
+  ],
+  "AIF 107": [
+    "Identify manual bottlenecks in a business.",
+    "Distinguish automated steps from bottleneck steps.",
+    "Audit workflows for automation opportunities.",
+    "Map solutions using Identify–Connect–Remove."
+  ],
+  "AIF 108": [
+    "Understand the difference between AI (Brain) and software (Body).",
+    "Learn the Receives–Thinks–Acts loop.",
+    "Map Brain and Body roles in real-world scenarios.",
+    "Understand the shift from Consumer to Builder thinking."
+  ],
+  "AIF 109": [
+    "Understand the difference between an API and a Webhook.",
+    "Learn when to use triggers versus requests.",
+    "Build a basic notification system using both.",
+    "Identify the first event worth tracking."
+  ],
+  "AIF 110": [
+    "Understand the Attract–Engage–Convert business model.",
+    "Diagnose which system is broken in a business.",
+    "Commit to the Builder identity.",
+    "Prepare to enter the Builder phase."
+  ]
+};
 var GP={"A":4,"A-":3.7,"B+":3.5,"B":3,"C+":2.5,"C":2,"D":1,"F":0},DESC={"A":"Excellent","A-":"Very good","B+":"Very good","B":"Good","C+":"Credit","C":"Satisfactory","D":"Pass","F":"Fail"};
 var IC={dash:"M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z",profile:"M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 4-6 8-6s8 2 8 6",rec:"M2 9l10-5 10 5-10 5zM6 12v5c3 2 9 2 12 0v-5",reg:"M4 4h7v16H4zM13 4h7v16h-7z",time:"M4 5h16v16H4zM4 10h16M8 3v4M16 3v4",exam:"M6 3h12v18H6zM9 8h6M9 12h6M9 16h4",fin:"M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v10",msg:"M3 5h18v14H3zM3 6l9 7 9-7",lib:"M4 4h6c1 0 2 1 2 2v14c0-1-1-2-2-2H4zM20 4h-6c-1 0-2 1-2 2v14c0-1 1-2 2-2h6z",sup:"M4 14v-2a8 8 0 0116 0v2M4 14h3v5H4zM17 14h3v5h-3z"};
 var NAV=[["dash","Dashboard","dash"],["profile","My Profile","profile"],["rec","Academic Records","rec"],["results","Results","",1],["trans","Transcripts","",1],["time","Timetable","time"],["reg","Course Registration","reg"],["exam","Examinations","exam"],["fin","Finance","fin"],["msg","Messages","msg"],["lib","Library","lib"],["sup","Support","sup"]];
@@ -12,7 +84,7 @@ var ANAV=[["students","Students","profile"],["time","Timetable","time"],["reg","
 var $=function(i){return document.getElementById(i)};
 var db=null,user=null,uid=null,isAdmin=false,role=null,sid=null,me=null,stu=[],news=[],view="dash",open=true,editing=null,flash="",unsubs=[],ready=false;
 var timetable=[],ttFilter="All",editingTt=null;
-var regConfig={isOpen:true,semester:"2024/2025 - First Semester",minCredits:12,maxCredits:21,deadline:"October 30, 2026"};
+var regConfig={isOpen:true,semester:"First Year - Semester 1",minCredits:12,maxCredits:18,deadline:"October 30, 2026"};
 var courses=[],myReg=null,adminRegs=[],editingCourse=null,adminRegTab="registrations",isEditingStudentReg=false;
 var selectedRegCodes=[];
 var DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -30,7 +102,7 @@ function gpaCard(g){var t=calc(all(),g),C=2*Math.PI*60,d=C*t.gpa/4,stand=!t.cr?"
 return'<div class="card side"><div class="bar">GPA SUMMARY</div><svg class="ring" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Cumulative GPA '+t.gpa.toFixed(2)+'"><circle cx="80" cy="80" r="60" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="80" cy="80" r="60" fill="none" stroke="var(--or)" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+d+' '+C+'" transform="rotate(-90 80 80)"/><text x="80" y="82" text-anchor="middle" font-size="34" font-weight="800" fill="currentColor">'+t.gpa.toFixed(2)+'</text><text x="80" y="102" text-anchor="middle" font-size="11" fill="var(--mute)">Cumulative GPA</text></svg><div class="kv"><span>Total credit hours earned</span><b>'+t.cr+'</b></div><div class="kv"><span>Total grade points</span><b>'+t.pts.toFixed(2)+'</b></div><div class="kv"><span>Academic standing</span><b>'+stand+'</b></div></div>'}
 function scaleCard(){return'<div class="card side"><div class="bar">GRADE SCALE</div><table><tr><th>Grade</th><th>Grade point</th><th>Description</th></tr>'+Object.keys(GP).map(function(k){return'<tr><td>'+k+'</td><td>'+GP[k].toFixed(2)+'</td><td>'+DESC[k]+'</td></tr>'}).join("")+'</table></div>'}
 function semCard(s,g){var t=calc(s[1],g);
-return'<div class="card sem"><h3>'+s[0]+'</h3><div class="wrap"><table><tr><th>Code</th><th>Course title</th><th>Cr.Hrs</th><th>Grade</th><th>GP</th></tr>'+s[1].map(function(c){var x=g[c[0]];return'<tr><td>'+c[0]+'</td><td>'+c[1]+'</td><td>'+c[2]+'</td><td>'+(x||"--")+'</td><td>'+(x?GP[x].toFixed(2):"--")+'</td></tr>'}).join("")+'</table></div><div class="sf"><span>Semester GPA: '+t.gpa.toFixed(2)+'</span><span>Total Cr.Hrs: '+t.cr+'</span></div></div>'}
+return'<div class="card sem"><h3>'+s[0]+'</h3><div class="wrap"><table><tr><th>Code</th><th>Course title</th><th>Cr.Hrs</th><th>Grade</th><th>GP</th><th>Course Outline</th></tr>'+s[1].map(function(c){var x=g[c[0]];var outl=COURSE_OUTLINES[c[0]]||[];var outlHtml=outl.length?'<details style="font-size:11px;color:var(--mute);cursor:pointer"><summary style="color:var(--or);font-weight:700">View Topics ('+outl.length+')</summary><div style="padding:4px 0 2px 8px;line-height:1.4">'+outl.map(function(o){return'&bull; '+esc(o)}).join('<br>')+'</div></details>':'--';return'<tr><td><b>'+c[0]+'</b></td><td>'+c[1]+'</td><td>'+c[2]+'</td><td><b>'+(x||"--")+'</b></td><td>'+(x?GP[x].toFixed(2):"--")+'</td><td>'+outlHtml+'</td></tr>'}).join("")+'</table></div><div class="sf"><span>Semester GPA: '+t.gpa.toFixed(2)+'</span><span>Total Cr.Hrs: '+t.cr+'</span></div></div>'}
 function newsHtml(){return news.length?news.map(function(n){return'<div class="ann"><b>'+esc(n.title)+'</b><div style="color:var(--mute)">'+esc(n.body)+'</div></div>'}).join(""):'<div class="empty"><b>No announcements</b>Your administrator has not posted anything yet.</div>'}
 function downloadBlob(content, mimeType, filename){
   var blob = new Blob([content], { type: mimeType });
@@ -477,8 +549,10 @@ function studentCourseRegView(){
       + '<h3>Confirmed Courses for ' + esc(sem) + '</h3>'
       + actBar
       + '<div class="wrap"><table>'
-      + '<tr><th>Code</th><th>Course Title</th><th>Credit Hours</th><th>Type</th><th>Instructor</th><th>Semester</th></tr>'
+      + '<tr><th>Code</th><th>Course Title</th><th>Credit Hours</th><th>Type</th><th>Instructor</th><th>Semester</th><th>Course Outline</th></tr>'
       + regList.map(function(c){
+          var outl = c.outline || COURSE_OUTLINES[c.code] || [];
+          var outlHtml = outl.length ? '<details style="font-size:11px;color:var(--mute);cursor:pointer"><summary style="color:var(--or);font-weight:700">View 4 Topics</summary><div style="padding:4px 0 2px 8px;line-height:1.4">' + outl.map(function(o){ return '&bull; ' + esc(o); }).join('<br>') + '</div></details>' : '--';
           return '<tr>'
             + '<td><b>' + esc(c.code) + '</b></td>'
             + '<td>' + esc(c.title) + '</td>'
@@ -486,6 +560,7 @@ function studentCourseRegView(){
             + '<td><span class="pill ' + (c.type==='Core'?'or':'dim') + '">' + esc(c.type || 'Core') + '</span></td>'
             + '<td>' + esc(c.lecturer || 'TBA') + '</td>'
             + '<td>' + esc(c.semester || sem) + '</td>'
+            + '<td>' + outlHtml + '</td>'
             + '</tr>';
         }).join("")
       + '</table></div>'
@@ -530,6 +605,7 @@ function studentCourseRegView(){
     + '<div class="courses-list">'
     + courses.map(function(c){
         var checked = selectedRegCodes.includes(c.code);
+        var outl = c.outline || COURSE_OUTLINES[c.code] || [];
         return '<div class="course-item ' + (checked?'selected':'') + '" data-checkcourse="' + esc(c.code) + '">'
           + '<input type="checkbox" ' + (checked?'checked':'') + ' onclick="event.stopPropagation()">'
           + '<div style="flex:1">'
@@ -538,7 +614,8 @@ function studentCourseRegView(){
           + '<span class="pill ' + (c.type==='Core'?'or':'dim') + '">' + esc(c.type || 'Core') + '</span>'
           + '<span class="pill dim">' + (c.credits || 0) + ' Credits</span>'
           + '</div>'
-          + '<div style="font-size:12px;color:var(--mute)">Instructor: ' + esc(c.lecturer || 'TBA') + ' &bull; ' + esc(c.level || 'All Levels') + '</div>'
+          + '<div style="font-size:12px;color:var(--mute)">Instructor: ' + esc(c.lecturer || 'TBA') + ' &bull; ' + esc(c.semester || sem) + '</div>'
+          + (outl.length ? '<div style="margin-top:6px;font-size:11px;color:var(--mute);background:var(--hi);padding:6px 10px;border-radius:6px"><b style="color:var(--ink);display:block;margin-bottom:2px">Course Outline Topics:</b>' + outl.map(function(o){ return '&bull; ' + esc(o); }).join('<br>') + '</div>' : '')
           + '</div>'
           + '</div>';
       }).join("")
@@ -606,8 +683,10 @@ function adminCourseRegView(){
       + '<div class="card">'
       + '<h3>Available Course Catalog (' + courses.length + ' courses)</h3>'
       + '<div class="wrap"><table>'
-      + '<tr><th>Code</th><th>Course Title</th><th>Credits</th><th>Category</th><th>Instructor</th><th>Semester</th><th>Level</th><th style="text-align:right">Actions</th></tr>'
+      + '<tr><th>Code</th><th>Course Title</th><th>Credits</th><th>Category</th><th>Instructor</th><th>Semester</th><th>Outline Topics</th><th style="text-align:right">Actions</th></tr>'
       + courses.map(function(c){
+          var outl = c.outline || COURSE_OUTLINES[c.code] || [];
+          var outlHtml = outl.length ? '<details style="font-size:11px;color:var(--mute);cursor:pointer"><summary style="color:var(--or);font-weight:700">View 4 Topics</summary><div style="padding:4px 0 2px 8px;line-height:1.4">' + outl.map(function(o){ return '&bull; ' + esc(o); }).join('<br>') + '</div></details>' : '--';
           return '<tr>'
             + '<td><b>' + esc(c.code) + '</b></td>'
             + '<td>' + esc(c.title) + '</td>'
@@ -615,7 +694,7 @@ function adminCourseRegView(){
             + '<td><span class="pill ' + (c.type==='Core'?'or':'dim') + '">' + esc(c.type || 'Core') + '</span></td>'
             + '<td>' + esc(c.lecturer || 'TBA') + '</td>'
             + '<td>' + esc(c.semester || 'First Semester') + '</td>'
-            + '<td><span class="pill dim">' + esc(c.level || 'All') + '</span></td>'
+            + '<td>' + outlHtml + '</td>'
             + '<td style="text-align:right;white-space:nowrap">'
             + '<button class="mini" data-courseedit="' + esc(c.code) + '">Edit</button> '
             + '<button class="mini" data-coursedel="' + esc(c.code) + '">Delete</button>'
@@ -697,47 +776,48 @@ function getLocalData(){
   var rc=localStorage.getItem("portal_reg_config"),sregs=localStorage.getItem("portal_student_regs");
 
   var stus=s?JSON.parse(s):[{
-    sid:"EGI_2024_02486",id:"EGI/2024/02486",name:"Ama Mensah",prog:"BSc Occupational Health and Safety",
-    dept:"Faculty of Health Sciences",level:"Level 300",year:"2024/2025",code:"ACCESS2024",
-    grades:{"OHS 101":"A","OHS 103":"B+","OHS 105":"A-","OHS 107":"A","GNS 101":"B+","OHS 102":"A","OHS 104":"B","OHS 106":"A-","OHS 108":"B+","ICT 101":"A"}
+    sid:"EGI_2024_02486",id:"EGI/2024/02486",name:"Ama Mensah",prog:"BSc Applied AI and Automation",
+    dept:"Faculty of Computing & Artificial Intelligence",level:"Level 100",year:"2024/2025",code:"ACCESS2024",
+    grades:{"AIF 101":"A","AIF 102":"A-","AIF 103":"B+","AIF 104":"A","AIF 105":"B+"}
   }];
   var newsList=n?JSON.parse(n):[{
-    id:1,title:"Welcome to the 2024/2025 Academic Year",
-    body:"Semester examinations will commence as scheduled. Ensure all course registrations and fees are cleared.",ts:Date.now()-3600000
+    id:1,title:"Welcome to Year 1: Applied AI & Automation Curriculum",
+    body:"The official course outline for Year 1 (Semester 1 & Semester 2) is now published. Complete your course registration for Semester 1 (AIF 101 to AIF 105) and consult your weekly timetable.",ts:Date.now()-3600000
   }];
   var ttList=tt?JSON.parse(tt):[
-    { id: 1, day: 'Monday', start: '08:30', end: '10:30', code: 'OHS 101', title: 'Introduction to OHS', lecturer: 'Dr. Kwame Mensah', venue: 'Lecture Hall A1', level: 'Level 100/300' },
-    { id: 2, day: 'Monday', start: '11:00', end: '13:00', code: 'OHS 103', title: 'Hazard Identification and Risk Assessment', lecturer: 'Prof. Eric Boateng', venue: 'Safety Lab 2', level: 'Level 100/300' },
-    { id: 3, day: 'Tuesday', start: '09:00', end: '11:00', code: 'OHS 105', title: 'Safety Management Principles', lecturer: 'Dr. Sarah Addo', venue: 'Lecture Hall B3', level: 'Level 100/300' },
-    { id: 4, day: 'Tuesday', start: '13:30', end: '15:30', code: 'GNS 101', title: 'Use of English', lecturer: 'Mrs. Abigail Osei', venue: 'Auditorium 1', level: 'All Levels' },
-    { id: 5, day: 'Wednesday', start: '10:00', end: '12:00', code: 'OHS 107', title: 'Communication Skills', lecturer: 'Dr. Frank Appiah', venue: 'Virtual Room 1', level: 'Level 100/300' },
-    { id: 6, day: 'Thursday', start: '08:30', end: '10:30', code: 'OHS 102', title: 'Occupational Hygiene', lecturer: 'Dr. Samuel Darko', venue: 'Health Science Block C', level: 'Level 100/300' },
-    { id: 7, day: 'Thursday', start: '11:00', end: '13:00', code: 'ICT 101', title: 'Introduction to Information Technology', lecturer: 'Ing. Michael Asante', venue: 'Computer Lab 3', level: 'Level 100' },
-    { id: 8, day: 'Friday', start: '09:00', end: '11:00', code: 'OHS 104', title: 'Ergonomics', lecturer: 'Dr. Kwame Mensah', venue: 'Lecture Hall A2', level: 'Level 100/300' },
-    { id: 9, day: 'Friday', start: '14:00', end: '16:00', code: 'OHS 106', title: 'Workplace Safety and Health Regulations', lecturer: 'Barrister Kenneth Owusu', venue: 'Lecture Hall B1', level: 'Level 100/300' }
+    { id: 1, day: 'Monday', start: '08:30', end: '10:30', code: 'AIF 101', title: 'AI Foundations', lecturer: 'Dr. Kwame Mensah', venue: 'AI Innovation Lab 1', level: 'Level 100' },
+    { id: 2, day: 'Monday', start: '11:00', end: '13:00', code: 'AIF 102', title: 'Tool vs. Automation', lecturer: 'Prof. Eric Boateng', venue: 'Automation Studio A', level: 'Level 100' },
+    { id: 3, day: 'Tuesday', start: '09:00', end: '11:00', code: 'AIF 103', title: 'The Personal Assistant', lecturer: 'Dr. Sarah Addo', venue: 'Applied AI Hub 2', level: 'Level 100' },
+    { id: 4, day: 'Tuesday', start: '13:30', end: '15:30', code: 'AIF 104', title: 'The AI Operating System', lecturer: 'Ing. Michael Asante', venue: 'Systems Lab 3', level: 'Level 100' },
+    { id: 5, day: 'Wednesday', start: '10:00', end: '12:00', code: 'AIF 105', title: 'The CREATE Framework', lecturer: 'Dr. Frank Appiah', venue: 'Auditorium 1', level: 'Level 100' },
+    { id: 6, day: 'Wednesday', start: '14:00', end: '16:00', code: 'AIF 101', title: 'AI Foundations (Hands-on Lab)', lecturer: 'Dr. Kwame Mensah', venue: 'Computer Lab 4', level: 'Level 100' },
+    { id: 7, day: 'Thursday', start: '08:30', end: '10:30', code: 'AIF 102', title: 'Tool vs. Automation (Workflow Lab)', lecturer: 'Prof. Eric Boateng', venue: 'Automation Studio A', level: 'Level 100' },
+    { id: 8, day: 'Thursday', start: '11:00', end: '13:00', code: 'AIF 103', title: 'The Personal Assistant (Prompt Lab)', lecturer: 'Dr. Sarah Addo', venue: 'Applied AI Hub 2', level: 'Level 100' },
+    { id: 9, day: 'Friday', start: '09:00', end: '11:00', code: 'AIF 104', title: 'The AI Operating System (Seminar)', lecturer: 'Ing. Michael Asante', venue: 'Systems Lab 3', level: 'Level 100' },
+    { id: 10, day: 'Friday', start: '13:00', end: '15:00', code: 'AIF 105', title: 'The CREATE Framework (Workshop)', lecturer: 'Dr. Frank Appiah', venue: 'Lecture Hall B1', level: 'Level 100' }
   ];
   var coursesList=crs?JSON.parse(crs):[
-    { code: 'OHS 101', title: 'Introduction to OHS', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Semester', level: 'Level 100' },
-    { code: 'OHS 103', title: 'Hazard Identification and Risk Assessment', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Semester', level: 'Level 100' },
-    { code: 'OHS 105', title: 'Safety Management Principles', credits: 3, type: 'Core', lecturer: 'Dr. Sarah Addo', semester: 'First Semester', level: 'Level 100' },
-    { code: 'OHS 107', title: 'Communication Skills', credits: 2, type: 'Core', lecturer: 'Dr. Frank Appiah', semester: 'First Semester', level: 'Level 100' },
-    { code: 'GNS 101', title: 'Use of English', credits: 2, type: 'Required', lecturer: 'Mrs. Abigail Osei', semester: 'First Semester', level: 'Level 100' },
-    { code: 'ICT 101', title: 'Introduction to Information Technology', credits: 2, type: 'Elective', lecturer: 'Ing. Michael Asante', semester: 'First Semester', level: 'Level 100' },
-    { code: 'OHS 109', title: 'Fire Safety and Emergency Response', credits: 3, type: 'Elective', lecturer: 'Mr. David Annan', semester: 'First Semester', level: 'Level 100' },
-    { code: 'OHS 301', title: 'Occupational Health Surveillance', credits: 3, type: 'Core', lecturer: 'Dr. Samuel Darko', semester: 'First Semester', level: 'Level 300' },
-    { code: 'OHS 303', title: 'Safety Auditing and Inspection', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Semester', level: 'Level 300' },
-    { code: 'OHS 305', title: 'Occupational Toxicology', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Semester', level: 'Level 300' }
+    { code: 'AIF 101', title: 'AI Foundations', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Year - Semester 1', level: 'Level 100', outline: COURSE_OUTLINES['AIF 101'] },
+    { code: 'AIF 102', title: 'Tool vs. Automation', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Year - Semester 1', level: 'Level 100', outline: COURSE_OUTLINES['AIF 102'] },
+    { code: 'AIF 103', title: 'The Personal Assistant', credits: 3, type: 'Core', lecturer: 'Dr. Sarah Addo', semester: 'First Year - Semester 1', level: 'Level 100', outline: COURSE_OUTLINES['AIF 103'] },
+    { code: 'AIF 104', title: 'The AI Operating System', credits: 3, type: 'Core', lecturer: 'Ing. Michael Asante', semester: 'First Year - Semester 1', level: 'Level 100', outline: COURSE_OUTLINES['AIF 104'] },
+    { code: 'AIF 105', title: 'The CREATE Framework', credits: 3, type: 'Core', lecturer: 'Dr. Frank Appiah', semester: 'First Year - Semester 1', level: 'Level 100', outline: COURSE_OUTLINES['AIF 105'] },
+    { code: 'AIF 106', title: 'Advanced Prompts', credits: 3, type: 'Core', lecturer: 'Dr. Samuel Darko', semester: 'First Year - Semester 2', level: 'Level 100', outline: COURSE_OUTLINES['AIF 106'] },
+    { code: 'AIF 107', title: 'Hunting Bottlenecks', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Year - Semester 2', level: 'Level 100', outline: COURSE_OUTLINES['AIF 107'] },
+    { code: 'AIF 108', title: 'The Brain and the Body', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Year - Semester 2', level: 'Level 100', outline: COURSE_OUTLINES['AIF 108'] },
+    { code: 'AIF 109', title: 'APIs and Webhooks', credits: 3, type: 'Core', lecturer: 'Ing. Michael Asante', semester: 'First Year - Semester 2', level: 'Level 100', outline: COURSE_OUTLINES['AIF 109'] },
+    { code: 'AIF 110', title: 'The Builder Blueprint', credits: 3, type: 'Core', lecturer: 'Dr. Sarah Addo', semester: 'First Year - Semester 2', level: 'Level 100', outline: COURSE_OUTLINES['AIF 110'] }
   ];
   var cfg=rc?JSON.parse(rc):{
     isOpen: true,
-    semester: '2024/2025 - First Semester',
+    semester: 'First Year - Semester 1',
     minCredits: 12,
-    maxCredits: 21,
+    maxCredits: 18,
     deadline: 'October 30, 2026'
   };
   var studentRegsObj=sregs?JSON.parse(sregs):{
     "EGI_2024_02486": {
-      courseCodes: ['OHS 101', 'OHS 103', 'OHS 105', 'OHS 107', 'GNS 101', 'ICT 101'],
+      courseCodes: ['AIF 101', 'AIF 102', 'AIF 103', 'AIF 104', 'AIF 105'],
       registeredAt: Date.now() - 86400000 * 3,
       status: 'Confirmed'
     }

@@ -87,21 +87,16 @@ students.set(seedSid, {
   sid: seedSid,
   student_id: 'EGI/2024/02486',
   name: 'Ama Mensah',
-  prog: 'BSc Occupational Health and Safety',
-  dept: 'Faculty of Health Sciences',
-  level: 'Level 300',
+  prog: 'BSc Applied AI and Automation',
+  dept: 'Faculty of Computing & Artificial Intelligence',
+  level: 'Level 100',
   year: '2024/2025',
   grades: {
-    'OHS 101': 'A',
-    'OHS 103': 'B+',
-    'OHS 105': 'A-',
-    'OHS 107': 'A',
-    'GNS 101': 'B+',
-    'OHS 102': 'A',
-    'OHS 104': 'B',
-    'OHS 106': 'A-',
-    'OHS 108': 'B+',
-    'ICT 101': 'A'
+    'AIF 101': 'A',
+    'AIF 102': 'A-',
+    'AIF 103': 'B+',
+    'AIF 104': 'A',
+    'AIF 105': 'B+'
   },
   code_hash: bcrypt.hashSync(seedCode, 10),
   created_at: Date.now()
@@ -110,8 +105,8 @@ students.set(seedSid, {
 // Seed announcement
 announcements.push({
   id: annIdSeq++,
-  title: 'Welcome to the 2024/2025 Academic Year',
-  body: 'Semester examinations will commence as scheduled. Ensure all course registrations and fees are cleared.',
+  title: 'Welcome to Year 1: Applied AI & Automation Curriculum',
+  body: 'The official course outline for Year 1 (Semester 1 & Semester 2) is now published. Complete your course registration for Semester 1 (AIF 101 to AIF 105) and consult your weekly timetable.',
   ts: Date.now() - 3600000
 });
 
@@ -120,44 +115,185 @@ let timetable = [];
 let ttIdSeq = 1;
 
 const initialTimetable = [
-  { id: ttIdSeq++, day: 'Monday', start: '08:30', end: '10:30', code: 'OHS 101', title: 'Introduction to OHS', lecturer: 'Dr. Kwame Mensah', venue: 'Lecture Hall A1', level: 'Level 100/300' },
-  { id: ttIdSeq++, day: 'Monday', start: '11:00', end: '13:00', code: 'OHS 103', title: 'Hazard Identification and Risk Assessment', lecturer: 'Prof. Eric Boateng', venue: 'Safety Lab 2', level: 'Level 100/300' },
-  { id: ttIdSeq++, day: 'Tuesday', start: '09:00', end: '11:00', code: 'OHS 105', title: 'Safety Management Principles', lecturer: 'Dr. Sarah Addo', venue: 'Lecture Hall B3', level: 'Level 100/300' },
-  { id: ttIdSeq++, day: 'Tuesday', start: '13:30', end: '15:30', code: 'GNS 101', title: 'Use of English', lecturer: 'Mrs. Abigail Osei', venue: 'Auditorium 1', level: 'All Levels' },
-  { id: ttIdSeq++, day: 'Wednesday', start: '10:00', end: '12:00', code: 'OHS 107', title: 'Communication Skills', lecturer: 'Dr. Frank Appiah', venue: 'Virtual Room 1', level: 'Level 100/300' },
-  { id: ttIdSeq++, day: 'Thursday', start: '08:30', end: '10:30', code: 'OHS 102', title: 'Occupational Hygiene', lecturer: 'Dr. Samuel Darko', venue: 'Health Science Block C', level: 'Level 100/300' },
-  { id: ttIdSeq++, day: 'Thursday', start: '11:00', end: '13:00', code: 'ICT 101', title: 'Introduction to Information Technology', lecturer: 'Ing. Michael Asante', venue: 'Computer Lab 3', level: 'Level 100' },
-  { id: ttIdSeq++, day: 'Friday', start: '09:00', end: '11:00', code: 'OHS 104', title: 'Ergonomics', lecturer: 'Dr. Kwame Mensah', venue: 'Lecture Hall A2', level: 'Level 100/300' },
-  { id: ttIdSeq++, day: 'Friday', start: '14:00', end: '16:00', code: 'OHS 106', title: 'Workplace Safety and Health Regulations', lecturer: 'Barrister Kenneth Owusu', venue: 'Lecture Hall B1', level: 'Level 100/300' }
+  { id: ttIdSeq++, day: 'Monday', start: '08:30', end: '10:30', code: 'AIF 101', title: 'AI Foundations', lecturer: 'Dr. Kwame Mensah', venue: 'AI Innovation Lab 1', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Monday', start: '11:00', end: '13:00', code: 'AIF 102', title: 'Tool vs. Automation', lecturer: 'Prof. Eric Boateng', venue: 'Automation Studio A', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Tuesday', start: '09:00', end: '11:00', code: 'AIF 103', title: 'The Personal Assistant', lecturer: 'Dr. Sarah Addo', venue: 'Applied AI Hub 2', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Tuesday', start: '13:30', end: '15:30', code: 'AIF 104', title: 'The AI Operating System', lecturer: 'Ing. Michael Asante', venue: 'Systems Lab 3', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Wednesday', start: '10:00', end: '12:00', code: 'AIF 105', title: 'The CREATE Framework', lecturer: 'Dr. Frank Appiah', venue: 'Auditorium 1', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Wednesday', start: '14:00', end: '16:00', code: 'AIF 101', title: 'AI Foundations (Hands-on Lab)', lecturer: 'Dr. Kwame Mensah', venue: 'Computer Lab 4', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Thursday', start: '08:30', end: '10:30', code: 'AIF 102', title: 'Tool vs. Automation (Workflow Lab)', lecturer: 'Prof. Eric Boateng', venue: 'Automation Studio A', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Thursday', start: '11:00', end: '13:00', code: 'AIF 103', title: 'The Personal Assistant (Prompt Lab)', lecturer: 'Dr. Sarah Addo', venue: 'Applied AI Hub 2', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Friday', start: '09:00', end: '11:00', code: 'AIF 104', title: 'The AI Operating System (Seminar)', lecturer: 'Ing. Michael Asante', venue: 'Systems Lab 3', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Friday', start: '13:00', end: '15:00', code: 'AIF 105', title: 'The CREATE Framework (Workshop)', lecturer: 'Dr. Frank Appiah', venue: 'Lecture Hall B1', level: 'Level 100' }
 ];
 timetable.push(...initialTimetable);
 
 // ---------- Course Registration Store & Seed Data ----------
 let registrationConfig = {
   isOpen: true,
-  semester: '2024/2025 - First Semester',
+  semester: 'First Year - Semester 1',
   minCredits: 12,
-  maxCredits: 21,
+  maxCredits: 18,
   deadline: 'October 30, 2026'
 };
 
 let coursesCatalog = [
-  { code: 'OHS 101', title: 'Introduction to OHS', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Semester', level: 'Level 100' },
-  { code: 'OHS 103', title: 'Hazard Identification and Risk Assessment', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Semester', level: 'Level 100' },
-  { code: 'OHS 105', title: 'Safety Management Principles', credits: 3, type: 'Core', lecturer: 'Dr. Sarah Addo', semester: 'First Semester', level: 'Level 100' },
-  { code: 'OHS 107', title: 'Communication Skills', credits: 2, type: 'Core', lecturer: 'Dr. Frank Appiah', semester: 'First Semester', level: 'Level 100' },
-  { code: 'GNS 101', title: 'Use of English', credits: 2, type: 'Required', lecturer: 'Mrs. Abigail Osei', semester: 'First Semester', level: 'Level 100' },
-  { code: 'ICT 101', title: 'Introduction to Information Technology', credits: 2, type: 'Elective', lecturer: 'Ing. Michael Asante', semester: 'First Semester', level: 'Level 100' },
-  { code: 'OHS 109', title: 'Fire Safety and Emergency Response', credits: 3, type: 'Elective', lecturer: 'Mr. David Annan', semester: 'First Semester', level: 'Level 100' },
-  { code: 'OHS 301', title: 'Occupational Health Surveillance', credits: 3, type: 'Core', lecturer: 'Dr. Samuel Darko', semester: 'First Semester', level: 'Level 300' },
-  { code: 'OHS 303', title: 'Safety Auditing and Inspection', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Semester', level: 'Level 300' },
-  { code: 'OHS 305', title: 'Occupational Toxicology', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Semester', level: 'Level 300' }
+  {
+    code: 'AIF 101',
+    title: 'AI Foundations',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Dr. Kwame Mensah',
+    semester: 'First Year - Semester 1',
+    level: 'Level 100',
+    outline: [
+      'Understand how AI generates predictions rather than calculations.',
+      'Distinguish prediction-based systems from fixed-rule systems.',
+      'Adopt the Builder mindset versus the Consumer mindset.',
+      'Practice giving AI better context for better outputs.'
+    ]
+  },
+  {
+    code: 'AIF 102',
+    title: 'Tool vs. Automation',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Prof. Eric Boateng',
+    semester: 'First Year - Semester 1',
+    level: 'Level 100',
+    outline: [
+      'Understand the difference between a tool and an automation.',
+      'Learn the Trigger–Process–Result automation framework.',
+      'Identify real-world automation opportunities.',
+      'Build a basic automation flow structure.'
+    ]
+  },
+  {
+    code: 'AIF 103',
+    title: 'The Personal Assistant',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Dr. Sarah Addo',
+    semester: 'First Year - Semester 1',
+    level: 'Level 100',
+    outline: [
+      'Identify daily friction points AI can solve.',
+      'Learn to give AI proper context for personal tasks.',
+      'Build the Context–Task–Format prompt structure.',
+      'Develop the habit of using AI daily.'
+    ]
+  },
+  {
+    code: 'AIF 104',
+    title: 'The AI Operating System',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Ing. Michael Asante',
+    semester: 'First Year - Semester 1',
+    level: 'Level 100',
+    outline: [
+      'Understand which tasks belong to humans versus AI.',
+      'Learn the Strategize–Execute–Review delegation flow.',
+      'Practise delegating routine work to AI.',
+      'Identify personal bottlenecks to automate.'
+    ]
+  },
+  {
+    code: 'AIF 105',
+    title: 'The CREATE Framework',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Dr. Frank Appiah',
+    semester: 'First Year - Semester 1',
+    level: 'Level 100',
+    outline: [
+      'Learn the six components: Context, Request, Explanation, Action, Tone, Extras.',
+      'Identify missing elements in weak prompts.',
+      'Practise applying CREATE to real requests.',
+      'Memorize the framework for future use.'
+    ]
+  },
+  {
+    code: 'AIF 106',
+    title: 'Advanced Prompts',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Dr. Samuel Darko',
+    semester: 'First Year - Semester 2',
+    level: 'Level 100',
+    outline: [
+      'Understand Few-Shot examples and Constraints.',
+      'Learn to prevent AI hallucinations using guardrails.',
+      'Build the Anti-Hallucination Guardrail.',
+      'Define custom constraints for business use.'
+    ]
+  },
+  {
+    code: 'AIF 107',
+    title: 'Hunting Bottlenecks',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Prof. Eric Boateng',
+    semester: 'First Year - Semester 2',
+    level: 'Level 100',
+    outline: [
+      'Identify manual bottlenecks in a business.',
+      'Distinguish automated steps from bottleneck steps.',
+      'Audit workflows for automation opportunities.',
+      'Map solutions using Identify–Connect–Remove.'
+    ]
+  },
+  {
+    code: 'AIF 108',
+    title: 'The Brain and the Body',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Dr. Kwame Mensah',
+    semester: 'First Year - Semester 2',
+    level: 'Level 100',
+    outline: [
+      'Understand the difference between AI (Brain) and software (Body).',
+      'Learn the Receives–Thinks–Acts loop.',
+      'Map Brain and Body roles in real-world scenarios.',
+      'Understand the shift from Consumer to Builder thinking.'
+    ]
+  },
+  {
+    code: 'AIF 109',
+    title: 'APIs and Webhooks',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Ing. Michael Asante',
+    semester: 'First Year - Semester 2',
+    level: 'Level 100',
+    outline: [
+      'Understand the difference between an API and a Webhook.',
+      'Learn when to use triggers versus requests.',
+      'Build a basic notification system using both.',
+      'Identify the first event worth tracking.'
+    ]
+  },
+  {
+    code: 'AIF 110',
+    title: 'The Builder Blueprint',
+    credits: 3,
+    type: 'Core',
+    lecturer: 'Dr. Sarah Addo',
+    semester: 'First Year - Semester 2',
+    level: 'Level 100',
+    outline: [
+      'Understand the Attract–Engage–Convert business model.',
+      'Diagnose which system is broken in a business.',
+      'Commit to the Builder identity.',
+      'Prepare to enter the Builder phase.'
+    ]
+  }
 ];
 
 const studentRegistrations = new Map();
-// Seed Ama Mensah registration
+// Seed Ama Mensah registration for Semester 1 (15 credits)
 studentRegistrations.set(seedSid, {
-  courseCodes: ['OHS 101', 'OHS 103', 'OHS 105', 'OHS 107', 'GNS 101', 'ICT 101'],
+  courseCodes: ['AIF 101', 'AIF 102', 'AIF 103', 'AIF 104', 'AIF 105'],
   registeredAt: Date.now() - 86400000 * 3,
   status: 'Confirmed'
 });
@@ -541,7 +677,8 @@ app.post('/api/courses', need('admin'), (req, res) => {
     return res.status(409).json({ error: 'A course with this code already exists.' });
   }
 
-  const course = { code, title, credits, type, lecturer, semester, level };
+  const outline = Array.isArray(req.body?.outline) ? req.body.outline.map(o => text(o, 250)).filter(Boolean) : [];
+  const course = { code, title, credits, type, lecturer, semester, level, outline };
   coursesCatalog.push(course);
   res.status(201).json({ ok: true, course });
 });
@@ -559,6 +696,9 @@ app.put('/api/courses/:code', need('admin'), (req, res) => {
   if (req.body?.lecturer !== undefined) course.lecturer = text(req.body.lecturer, 120);
   if (req.body?.semester) course.semester = text(req.body.semester, 50);
   if (req.body?.level) course.level = text(req.body.level, 50);
+  if (Array.isArray(req.body?.outline)) {
+    course.outline = req.body.outline.map(o => text(o, 250)).filter(Boolean);
+  }
 
   res.json({ ok: true, course });
 });
