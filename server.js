@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const HOST = '0.0.0.0';
 const SECRET = process.env.SESSION_SECRET || 'portal_default_secret_key_32_characters_minimum_length_required';
 const ADMIN_PW = process.env.ADMIN_PASSWORD || 'Justice*2233';
@@ -115,6 +115,53 @@ announcements.push({
   ts: Date.now() - 3600000
 });
 
+// ---------- Timetable Store & Seed Data ----------
+let timetable = [];
+let ttIdSeq = 1;
+
+const initialTimetable = [
+  { id: ttIdSeq++, day: 'Monday', start: '08:30', end: '10:30', code: 'OHS 101', title: 'Introduction to OHS', lecturer: 'Dr. Kwame Mensah', venue: 'Lecture Hall A1', level: 'Level 100/300' },
+  { id: ttIdSeq++, day: 'Monday', start: '11:00', end: '13:00', code: 'OHS 103', title: 'Hazard Identification and Risk Assessment', lecturer: 'Prof. Eric Boateng', venue: 'Safety Lab 2', level: 'Level 100/300' },
+  { id: ttIdSeq++, day: 'Tuesday', start: '09:00', end: '11:00', code: 'OHS 105', title: 'Safety Management Principles', lecturer: 'Dr. Sarah Addo', venue: 'Lecture Hall B3', level: 'Level 100/300' },
+  { id: ttIdSeq++, day: 'Tuesday', start: '13:30', end: '15:30', code: 'GNS 101', title: 'Use of English', lecturer: 'Mrs. Abigail Osei', venue: 'Auditorium 1', level: 'All Levels' },
+  { id: ttIdSeq++, day: 'Wednesday', start: '10:00', end: '12:00', code: 'OHS 107', title: 'Communication Skills', lecturer: 'Dr. Frank Appiah', venue: 'Virtual Room 1', level: 'Level 100/300' },
+  { id: ttIdSeq++, day: 'Thursday', start: '08:30', end: '10:30', code: 'OHS 102', title: 'Occupational Hygiene', lecturer: 'Dr. Samuel Darko', venue: 'Health Science Block C', level: 'Level 100/300' },
+  { id: ttIdSeq++, day: 'Thursday', start: '11:00', end: '13:00', code: 'ICT 101', title: 'Introduction to Information Technology', lecturer: 'Ing. Michael Asante', venue: 'Computer Lab 3', level: 'Level 100' },
+  { id: ttIdSeq++, day: 'Friday', start: '09:00', end: '11:00', code: 'OHS 104', title: 'Ergonomics', lecturer: 'Dr. Kwame Mensah', venue: 'Lecture Hall A2', level: 'Level 100/300' },
+  { id: ttIdSeq++, day: 'Friday', start: '14:00', end: '16:00', code: 'OHS 106', title: 'Workplace Safety and Health Regulations', lecturer: 'Barrister Kenneth Owusu', venue: 'Lecture Hall B1', level: 'Level 100/300' }
+];
+timetable.push(...initialTimetable);
+
+// ---------- Course Registration Store & Seed Data ----------
+let registrationConfig = {
+  isOpen: true,
+  semester: '2024/2025 - First Semester',
+  minCredits: 12,
+  maxCredits: 21,
+  deadline: 'October 30, 2026'
+};
+
+let coursesCatalog = [
+  { code: 'OHS 101', title: 'Introduction to OHS', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Semester', level: 'Level 100' },
+  { code: 'OHS 103', title: 'Hazard Identification and Risk Assessment', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Semester', level: 'Level 100' },
+  { code: 'OHS 105', title: 'Safety Management Principles', credits: 3, type: 'Core', lecturer: 'Dr. Sarah Addo', semester: 'First Semester', level: 'Level 100' },
+  { code: 'OHS 107', title: 'Communication Skills', credits: 2, type: 'Core', lecturer: 'Dr. Frank Appiah', semester: 'First Semester', level: 'Level 100' },
+  { code: 'GNS 101', title: 'Use of English', credits: 2, type: 'Required', lecturer: 'Mrs. Abigail Osei', semester: 'First Semester', level: 'Level 100' },
+  { code: 'ICT 101', title: 'Introduction to Information Technology', credits: 2, type: 'Elective', lecturer: 'Ing. Michael Asante', semester: 'First Semester', level: 'Level 100' },
+  { code: 'OHS 109', title: 'Fire Safety and Emergency Response', credits: 3, type: 'Elective', lecturer: 'Mr. David Annan', semester: 'First Semester', level: 'Level 100' },
+  { code: 'OHS 301', title: 'Occupational Health Surveillance', credits: 3, type: 'Core', lecturer: 'Dr. Samuel Darko', semester: 'First Semester', level: 'Level 300' },
+  { code: 'OHS 303', title: 'Safety Auditing and Inspection', credits: 3, type: 'Core', lecturer: 'Prof. Eric Boateng', semester: 'First Semester', level: 'Level 300' },
+  { code: 'OHS 305', title: 'Occupational Toxicology', credits: 3, type: 'Core', lecturer: 'Dr. Kwame Mensah', semester: 'First Semester', level: 'Level 300' }
+];
+
+const studentRegistrations = new Map();
+// Seed Ama Mensah registration
+studentRegistrations.set(seedSid, {
+  courseCodes: ['OHS 101', 'OHS 103', 'OHS 105', 'OHS 107', 'GNS 101', 'ICT 101'],
+  registeredAt: Date.now() - 86400000 * 3,
+  status: 'Confirmed'
+});
+
 // ---------- Express App Setup ----------
 const app = express();
 app.set('trust proxy', 1);
@@ -160,6 +207,7 @@ app.use((req, res, next) => {
           originHost.includes(reqHost) ||
           originHost.endsWith('.run.app') ||
           originHost.endsWith('.google.com') ||
+          originHost.endsWith('.googleusercontent.com') ||
           originHost.includes('localhost') ||
           originHost.includes('127.0.0.1');
 
@@ -367,6 +415,240 @@ app.post('/api/announcements', need('admin'), (req, res) => {
 app.delete('/api/announcements/:id', need('admin'), (req, res) => {
   const id = Number(req.params.id);
   announcements = announcements.filter(a => a.id !== id);
+  res.json({ ok: true });
+});
+
+// ---------- Timetable Routes ----------
+app.get('/api/timetable', need(), (req, res) => {
+  const daysOrder = { 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7 };
+  const items = [...timetable].sort((a, b) => {
+    const da = daysOrder[a.day] || 99;
+    const db = daysOrder[b.day] || 99;
+    if (da !== db) return da - db;
+    return (a.start || '').localeCompare(b.start || '');
+  });
+  res.json({ items });
+});
+
+app.post('/api/timetable', need('admin'), (req, res) => {
+  const day = text(req.body?.day, 20);
+  const start = text(req.body?.start, 10);
+  const end = text(req.body?.end, 10);
+  const code = text(req.body?.code, 20).toUpperCase();
+  const title = text(req.body?.title, 120);
+  const lecturer = text(req.body?.lecturer, 120);
+  const venue = text(req.body?.venue, 100);
+  const level = text(req.body?.level, 50);
+
+  if (!day || !code || !title) {
+    return res.status(400).json({ error: 'Day, Course Code, and Title are required.' });
+  }
+
+  const item = {
+    id: ttIdSeq++,
+    day,
+    start: start || '08:00',
+    end: end || '10:00',
+    code,
+    title,
+    lecturer: lecturer || 'TBA',
+    venue: venue || 'Main Campus',
+    level: level || 'All Students'
+  };
+  timetable.push(item);
+  res.status(201).json({ ok: true, item });
+});
+
+app.put('/api/timetable/:id', need('admin'), (req, res) => {
+  const id = Number(req.params.id);
+  const item = timetable.find(t => t.id === id);
+  if (!item) {
+    return res.status(404).json({ error: 'Timetable entry not found.' });
+  }
+
+  if (req.body?.day) item.day = text(req.body.day, 20);
+  if (req.body?.start) item.start = text(req.body.start, 10);
+  if (req.body?.end) item.end = text(req.body.end, 10);
+  if (req.body?.code) item.code = text(req.body.code, 20).toUpperCase();
+  if (req.body?.title) item.title = text(req.body.title, 120);
+  if (req.body?.lecturer !== undefined) item.lecturer = text(req.body.lecturer, 120);
+  if (req.body?.venue !== undefined) item.venue = text(req.body.venue, 100);
+  if (req.body?.level !== undefined) item.level = text(req.body.level, 50);
+
+  res.json({ ok: true, item });
+});
+
+app.delete('/api/timetable/:id', need('admin'), (req, res) => {
+  const id = Number(req.params.id);
+  timetable = timetable.filter(t => t.id !== id);
+  res.json({ ok: true });
+});
+
+app.post('/api/timetable/publish', need('admin'), (req, res) => {
+  const title = text(req.body?.title, 200) || 'Official Academic Timetable Released';
+  const body = text(req.body?.body, 2000) || 'The institution has updated and published the official class timetable for all students. Please visit the Timetable section to view schedules, venues, and instructor assignments.';
+  announcements.unshift({
+    id: annIdSeq++,
+    title,
+    body,
+    ts: Date.now()
+  });
+  res.json({ ok: true, count: timetable.length });
+});
+
+// ---------- Course Registration Routes ----------
+app.get('/api/registration/config', need(), (req, res) => {
+  res.json({ config: registrationConfig });
+});
+
+app.put('/api/registration/config', need('admin'), (req, res) => {
+  if (typeof req.body?.isOpen === 'boolean') {
+    registrationConfig.isOpen = req.body.isOpen;
+  }
+  if (req.body?.semester) {
+    registrationConfig.semester = text(req.body.semester, 100);
+  }
+  if (req.body?.deadline) {
+    registrationConfig.deadline = text(req.body.deadline, 100);
+  }
+  if (req.body?.minCredits !== undefined) {
+    registrationConfig.minCredits = Math.max(1, parseInt(req.body.minCredits, 10) || 12);
+  }
+  if (req.body?.maxCredits !== undefined) {
+    registrationConfig.maxCredits = Math.max(registrationConfig.minCredits, parseInt(req.body.maxCredits, 10) || 21);
+  }
+  res.json({ ok: true, config: registrationConfig });
+});
+
+app.get('/api/courses', need(), (req, res) => {
+  res.json({ courses: coursesCatalog });
+});
+
+app.post('/api/courses', need('admin'), (req, res) => {
+  const code = text(req.body?.code, 20).toUpperCase();
+  const title = text(req.body?.title, 120);
+  const credits = parseInt(req.body?.credits, 10) || 3;
+  const type = text(req.body?.type, 30) || 'Core';
+  const lecturer = text(req.body?.lecturer, 120);
+  const semester = text(req.body?.semester, 50) || 'First Semester';
+  const level = text(req.body?.level, 50) || 'All Levels';
+
+  if (!code || !title) {
+    return res.status(400).json({ error: 'Course Code and Title are required.' });
+  }
+
+  if (coursesCatalog.some(c => c.code === code)) {
+    return res.status(409).json({ error: 'A course with this code already exists.' });
+  }
+
+  const course = { code, title, credits, type, lecturer, semester, level };
+  coursesCatalog.push(course);
+  res.status(201).json({ ok: true, course });
+});
+
+app.put('/api/courses/:code', need('admin'), (req, res) => {
+  const code = text(req.params.code, 20).toUpperCase();
+  const course = coursesCatalog.find(c => c.code === code);
+  if (!course) {
+    return res.status(404).json({ error: 'Course not found.' });
+  }
+
+  if (req.body?.title) course.title = text(req.body.title, 120);
+  if (req.body?.credits !== undefined) course.credits = parseInt(req.body.credits, 10) || 3;
+  if (req.body?.type) course.type = text(req.body.type, 30);
+  if (req.body?.lecturer !== undefined) course.lecturer = text(req.body.lecturer, 120);
+  if (req.body?.semester) course.semester = text(req.body.semester, 50);
+  if (req.body?.level) course.level = text(req.body.level, 50);
+
+  res.json({ ok: true, course });
+});
+
+app.delete('/api/courses/:code', need('admin'), (req, res) => {
+  const code = text(req.params.code, 20).toUpperCase();
+  coursesCatalog = coursesCatalog.filter(c => c.code !== code);
+  res.json({ ok: true });
+});
+
+app.get('/api/registration', need('student'), (req, res) => {
+  const studentSid = req.session.sid;
+  const reg = studentRegistrations.get(studentSid) || null;
+  res.json({
+    registration: reg,
+    courses: coursesCatalog,
+    config: registrationConfig
+  });
+});
+
+app.post('/api/registration', need('student'), (req, res) => {
+  if (!registrationConfig.isOpen) {
+    return res.status(400).json({ error: 'Course registration is currently closed.' });
+  }
+
+  const rawCodes = Array.isArray(req.body?.courseCodes) ? req.body.courseCodes : [];
+  const courseCodes = [...new Set(rawCodes.map(c => text(c, 20).toUpperCase()).filter(Boolean))];
+
+  if (courseCodes.length === 0) {
+    return res.status(400).json({ error: 'Please select at least one course to register.' });
+  }
+
+  const selectedCourses = coursesCatalog.filter(c => courseCodes.includes(c.code));
+  const totalCredits = selectedCourses.reduce((sum, c) => sum + (c.credits || 0), 0);
+
+  if (totalCredits < registrationConfig.minCredits) {
+    return res.status(400).json({
+      error: `Minimum credit hours required is ${registrationConfig.minCredits}. Selected: ${totalCredits} credit hours.`
+    });
+  }
+  if (totalCredits > registrationConfig.maxCredits) {
+    return res.status(400).json({
+      error: `Maximum credit hours allowed is ${registrationConfig.maxCredits}. Selected: ${totalCredits} credit hours.`
+    });
+  }
+
+  const record = {
+    courseCodes,
+    totalCredits,
+    registeredAt: Date.now(),
+    status: 'Confirmed'
+  };
+
+  studentRegistrations.set(req.session.sid, record);
+  res.json({ ok: true, registration: record });
+});
+
+app.get('/api/registrations', need('admin'), (req, res) => {
+  const list = [];
+  for (const [stSid, reg] of studentRegistrations.entries()) {
+    const student = students.get(stSid);
+    const regCourses = coursesCatalog.filter(c => reg.courseCodes.includes(c.code));
+    const totalCredits = regCourses.reduce((sum, c) => sum + (c.credits || 0), 0);
+    list.push({
+      sid: stSid,
+      studentId: student?.student_id || stSid,
+      name: student?.name || 'Unknown Student',
+      prog: student?.prog || '',
+      level: student?.level || '',
+      courseCodes: reg.courseCodes,
+      courseCount: reg.courseCodes.length,
+      totalCredits,
+      status: reg.status || 'Confirmed',
+      registeredAt: reg.registeredAt
+    });
+  }
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  res.json({ registrations: list, config: registrationConfig });
+});
+
+app.put('/api/registrations/:sid', need('admin'), (req, res) => {
+  const sid = req.params.sid;
+  const existing = studentRegistrations.get(sid) || { courseCodes: [], registeredAt: Date.now() };
+  if (Array.isArray(req.body?.courseCodes)) {
+    existing.courseCodes = req.body.courseCodes.map(c => text(c, 20).toUpperCase());
+  }
+  if (req.body?.status) {
+    existing.status = text(req.body.status, 20);
+  }
+  studentRegistrations.set(sid, existing);
   res.json({ ok: true });
 });
 
