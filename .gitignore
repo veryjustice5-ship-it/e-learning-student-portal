@@ -1,3 +1,4 @@
+node_modules
 __pycache__
 *.pyc
 venv
@@ -5,3 +6,5 @@ venv
 data
 .env
 .pytest_cache
+*.log
+
