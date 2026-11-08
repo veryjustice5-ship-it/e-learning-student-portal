@@ -1,62 +1,81 @@
-# Student Portal (Flask)
+# Student Portal | eLearning Group Institute
 
-Student and admin portal for eLearning Group Institute. Flask + SQLite, one container, no external database.
-The frontend in `public/` is plain HTML, CSS and JavaScript and talks to the Flask JSON API under `/api`.
+Student and administrator portal for eLearning Group Institute offering the **BSc in Cybersecurity and Artificial Intelligence** degree programme across Years 1, 2, and 3 (6 semesters).
 
-- **Admin login:** one administrator password from the environment. Admins add and edit students, enter grades, reset access codes and post announcements.
-- **Student login:** Student ID plus a one-time access code issued by the admin. Students see only their own results, GPA and announcements.
-- **Security built in:** hashed access codes (Werkzeug scrypt), signed HttpOnly SameSite=Strict session cookies (8 hours), login rate limiting (Flask-Limiter), strict Content-Security-Policy and security headers (Flask-Talisman), same-origin check on writes, server-side validation, non-root container.
+## Features
 
-## 1. Configure
+- **Full Cybersecurity & AI Curriculum:** 36 structured courses covering Year 1, Year 2, and Year 3 (6 semesters total, 6 courses per semester) in Artificial Intelligence, Neural Foundations, Deep Learning, Cloud Security, Ethical Hacking, Digital Forensics, and Enterprise Security Architecture.
+- **Student Portal:**
+  - Student login with Student ID and access code (default seed student: `EGI/2024/02486` / `ACCESS2024` for **Effah Emmanuella**, Level 300).
+  - Academic records, GPA calculations, semester breakdowns, and announcements.
+  - Interactive class timetable schedule (downloadable in HTML/PDF and printable).
+  - Course registration management and official registration slip generator.
+  - Official Academic Transcripts and Results Slips generation (HTML/PDF and CSV export).
+- **Admin Console:**
+  - Secure administrator login with password authentication.
+  - Student directory management with 26 enrolled students (grades, levels, reset access codes).
+  - Dynamic course catalog with full editing capabilities (`PUT /api/courses/:code`).
+  - Master timetable management and announcement broadcast system.
+- **Modern Node.js Architecture:** Built with Node.js, Express, Cookie Sessions, bcryptjs password hashing, and clean responsive CSS.
 
-    cp .env.example .env
+## 1. Environment Configuration
 
-Fill in `SESSION_SECRET` (32+ characters), `ADMIN_PASSWORD` (10+ characters) and `DOMAIN`. The app refuses to start without the first two.
+Copy the example environment file:
 
-## 2. Run locally
+```bash
+cp .env.example .env
+```
 
-    python -m venv .venv && source .venv/bin/activate
-    pip install -r requirements-dev.txt
-    export SESSION_SECRET=$(python -c "import secrets; print(secrets.token_hex(32))")
-    export ADMIN_PASSWORD='choose-a-long-password' APP_ENV=development
-    python app.py          # http://127.0.0.1:8000
-    pytest                 # run the API tests
+Set the following variables:
+- `SESSION_SECRET`: Session encryption secret (32+ characters).
+- `ADMIN_PASSWORD`: Administrator portal access password (default: `Justice*2233`).
+- `DOMAIN`: Domain name if deploying behind a reverse proxy.
 
-## 3. Deploy
+## 2. Run Locally
 
-### Option A: Docker with automatic HTTPS (recommended)
-Point your domain's DNS A record at your server, then:
+```bash
+npm install
+npm run dev
+```
 
-    docker compose up -d --build
+The portal runs on `http://localhost:3000`.
 
-Caddy gets and renews the HTTPS certificate automatically. Open `https://YOUR_DOMAIN`.
+## 3. Deployment
 
-### Option B: gunicorn directly
+### Option A: Docker with automatic HTTPS (Caddy)
 
-    pip install -r requirements.txt
-    export $(grep -v '^#' .env | xargs)
-    gunicorn -w 1 --threads 8 -b 127.0.0.1:8000 app:app
+```bash
+docker compose up -d --build
+```
 
-Put it behind an HTTPS reverse proxy (Caddy, nginx) and keep it alive with systemd. Use one worker with threads so the login rate limiter stays accurate.
+### Option B: Node.js production service
 
-### Option C: Render, Railway or Fly.io
-Deploy the Dockerfile, set `SESSION_SECRET` and `ADMIN_PASSWORD`, and attach a **persistent volume mounted at `/app/data`**. Without it the database is lost on every redeploy.
+```bash
+npm install --production
+node server.js
+```
 
-## 4. First use
-1. Open the site, choose **Admin login**, sign in with `ADMIN_PASSWORD`.
-2. Click **Add student**. The access code appears once. Give it to the student.
-3. Students use **Student login** with their Student ID and code.
+### Option C: GitHub Pages (Static Client Mode)
+The static frontend can also run on GitHub Pages via `.github/workflows/static.yml` with client-side state fallbacks.
 
-## Operations
-- **Backup:** the database is one file. `docker compose exec app python -c "import sqlite3; s=sqlite3.connect('/app/data/portal.db'); s.backup(sqlite3.connect('/app/data/backup.db'))"`, then copy `backup.db` off the server. Do this regularly.
-- **Health check:** `GET /healthz`.
-- **Rotate the admin password:** change `ADMIN_PASSWORD` and restart. Change `SESSION_SECRET` to sign everyone out.
-- **Course list:** edit `SEMS` at the top of `public/app.js`, then redeploy.
-- **Logo and colours:** replace `public/logo.jpg`; colours are variables at the top of `public/styles.css`.
+## 4. Default Credentials
 
-## Layout
+- **Admin Login:** Password `Justice*2233`
+- **Student Login (Effah Emmanuella - Level 300):**
+  - **Student ID:** `EGI/2024/02486`
+  - **Access Code:** `ACCESS2024`
 
-    app.py             Flask app: auth, API, SQLite
-    public/            index.html, app.js, styles.css, logo.jpg (unchanged frontend)
-    tests/             API tests
-    Dockerfile  docker-compose.yml  Caddyfile  .env.example  requirements*.txt
+## Project Structure
+
+```
+server.js          Node.js Express backend API & session management
+app.js             Frontend application logic, state, and document generation
+index.html         HTML5 shell and responsive portal interface
+styles.css         Modern stylesheet with responsive layout and print styles
+logo.jpg           Institutional logo
+metadata.json      Applet metadata configuration
+.github/           GitHub Actions workflows for static deployment
+Dockerfile         Container specification
+docker-compose.yml Multi-container setup with Caddy HTTPS
+```
+
