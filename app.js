@@ -1,10 +1,120 @@
 'use strict';
-var SEMS=[["First Year - Semester 1",[["OHS 101","Introduction to OHS",3,"B+"],["OHS 103","Hazard Identification and Risk Assessment",3,"B"],["OHS 105","Safety Management Principles",3,"B+"],["OHS 107","Communication Skills",2,"A-"],["GNS 101","Use of English",2,"B"]]],
-["First Year - Semester 2",[["OHS 102","Occupational Hygiene",3,"B+"],["OHS 104","Ergonomics",3,"B"],["OHS 106","Workplace Safety and Health Regulations",3,"B+"],["OHS 108","Environmental Health and Safety",3,"B"],["ICT 101","Introduction to Information Technology",2,"A-"]]],
-["First Year - Semester 3",[["OHS 109","Fire Safety and Emergency Response",3,"B+"],["OHS 111","Industrial Safety Management",3,"B"],["OHS 113","Health Promotion at Workplace",3,"B+"],["OHS 115","Safety Legislation and Compliance",3,"B"],["GNS 102","Entrepreneurship",2,"A-"]]],
-["Third Year - Semester 1",[["OHS 301","Occupational Health Surveillance",3,"B+"],["OHS 303","Safety Auditing and Inspection",3,"B"],["OHS 305","Occupational Toxicology",3,"B+"],["OHS 307","Project Management in OHS",3,"B"],["OHS 309","Research Methods",2,"A-"]]],
-["Third Year - Semester 2",[["OHS 302","Risk Management Strategies",3,"B+"],["OHS 304","Disaster Management and Preparedness",3,"B"],["OHS 306","Occupational Health Law",3,"B+"],["OHS 308","Advanced Ergonomics",3,"B"],["OHS 310","Seminar in OHS",2,"A-"]]],
-["Third Year - Semester 3",[["OHS 311","Strategic Safety Management",3,"B+"],["OHS 313","Integrated Management Systems",3,"B"],["OHS 315","Occupational Health Economics",3,"B+"],["OHS 317","Applied Research Project",3,"B"],["OHS 319","Professional Practice in OHS",2,"A-"]]]];
+var SEMS=[
+  ["Year 1 - Semester 1",[
+    ["CYB 101","Introduction to Cybersecurity",3,"A"],
+    ["ART 101","Fundamentals of Artificial Intelligence",3,"A"],
+    ["CSC 101","Python Programming for AI & Security",3,"A-"],
+    ["CYB 103","Computer Networks & Defense Fundamentals",3,"B+"],
+    ["MAT 101","Discrete Mathematics for Computing",3,"A"],
+    ["GNS 101","Academic Writing & Communication Skills",2,"A"]
+  ]],
+  ["Year 1 - Semester 2",[
+    ["ART 102","Machine Learning & Neural Foundations",3,"A"],
+    ["CYB 102","Ethical Hacking & Defensive Systems",3,"A-"],
+    ["CYB 104","Applied Cryptography & Information Assurance",3,"B+"],
+    ["CSC 102","Data Structures & Algorithms for AI",3,"A"],
+    ["CYB 106","Linux Systems & Security Administration",3,"A"],
+    ["GNS 102","Professional Ethics in AI & Cybersecurity",2,"A-"]
+  ]],
+  ["Year 2 - Semester 1",[
+    ["CYB 201","Web Application Security & Pen Testing",3,"A"],
+    ["ART 201","Deep Learning & Computer Vision",3,"A"],
+    ["CYB 203","Digital Forensics & Incident Response",3,"A-"],
+    ["CSC 201","Database Management & SQL Security",3,"A"],
+    ["MAT 201","Linear Algebra & Statistics for AI",3,"A"],
+    ["CYB 205","Wireless & IoT Network Security",2,"A"]
+  ]],
+  ["Year 2 - Semester 2",[
+    ["ART 202","Natural Language Processing & Large Language Models",3,"A"],
+    ["CYB 202","Cloud Security Architecture & DevSecOps",3,"A"],
+    ["ART 204","AI-Powered Threat Detection & Analytics",3,"A"],
+    ["CSC 202","Secure Software Engineering & Code Auditing",3,"A-"],
+    ["CYB 204","Malware Analysis & Reverse Engineering",3,"A"],
+    ["GNS 202","Cybersecurity Governance, Risk & Compliance",2,"A"]
+  ]],
+  ["Year 3 - Semester 1",[
+    ["CYB 301","Enterprise Security Architecture & Zero Trust",3,"A"],
+    ["ART 301","Reinforcement Learning & Autonomous Agents",3,"A"],
+    ["CYB 303","Critical Infrastructure & SCADA Security",3,"A-"],
+    ["ART 303","Generative AI & Adversarial Robustness",3,"A"],
+    ["CSC 301","Distributed Systems & Blockchain Security",3,"A"],
+    ["CYB 305","Applied Research Methods in Cyber & AI",2,"A"]
+  ]],
+  ["Year 3 - Semester 2",[
+    ["CYB 302","Capstone Project & Cyber Range Simulations",3,"A"],
+    ["ART 302","AI Safety, Alignment & Explainable AI",3,"A"],
+    ["CYB 304","Red Team vs Blue Team Operations",3,"A"],
+    ["ART 304","Edge AI & Embedded Threat Intelligence",3,"A-"],
+    ["CYB 306","Identity & Access Management Engineering",3,"A"],
+    ["GNS 302","Cyber Law, National Security & Policy",2,"A"]
+  ]]
+];
+
+function syncSemsFromCourses(){
+  if(!courses||!courses.length)return;
+  var semOrder=[
+    "Year 1 - Semester 1",
+    "Year 1 - Semester 2",
+    "Year 2 - Semester 1",
+    "Year 2 - Semester 2",
+    "Year 3 - Semester 1",
+    "Year 3 - Semester 2"
+  ];
+  var groups={};
+  semOrder.forEach(function(s){groups[s]=[]});
+
+  courses.forEach(function(c){
+    var e=[c.code,c.title,c.cr||3,"A"];
+    var sm=String(c.sem||"").trim();
+    var lv=String(c.level||"").trim();
+    var targetSem=null;
+
+    for(var i=0;i<semOrder.length;i++){
+      if(sm.toLowerCase()===semOrder[i].toLowerCase()){
+        targetSem=semOrder[i];
+        break;
+      }
+    }
+
+    if(!targetSem){
+      var yr=1;
+      if(lv==="300"||sm.indexOf("3")!==-1&&sm.toLowerCase().indexOf("year 3")!==-1||sm.toLowerCase().indexOf("yr 3")!==-1){
+        yr=3;
+      } else if(lv==="200"||sm.indexOf("2")!==-1&&sm.toLowerCase().indexOf("year 2")!==-1||sm.toLowerCase().indexOf("yr 2")!==-1){
+        yr=2;
+      } else if(lv==="100"||sm.toLowerCase().indexOf("year 1")!==-1){
+        yr=1;
+      } else {
+        var numMatch=(c.code.match(/\d+/) || ["101"])[0];
+        var firstDigit=parseInt(numMatch[0],10);
+        if(firstDigit===3)yr=3;
+        else if(firstDigit===2)yr=2;
+        else yr=1;
+      }
+      var isSem2=sm.indexOf("2")!==-1&&(sm.toLowerCase().indexOf("sem 2")!==-1||sm.toLowerCase().indexOf("semester 2")!==-1||sm.trim()==="2"||sm.slice(-1)==="2");
+      targetSem="Year "+yr+" - Semester "+(isSem2?"2":"1");
+    }
+
+    if(!groups[targetSem])groups[targetSem]=[];
+    groups[targetSem].push(e);
+  });
+
+  var newSems=[];
+  semOrder.forEach(function(k){
+    if(groups[k]&&groups[k].length){
+      newSems.push([k,groups[k]]);
+    }
+  });
+  Object.keys(groups).forEach(function(k){
+    if(semOrder.indexOf(k)===-1&&groups[k].length){
+      newSems.push([k,groups[k]]);
+    }
+  });
+  if(newSems.length){
+    SEMS=newSems;
+  }
+}
+
 var GP={"A":4,"A-":3.7,"B+":3.5,"B":3,"C+":2.5,"C":2,"D":1,"F":0},DESC={"A":"Excellent","A-":"Very good","B+":"Very good","B":"Good","C+":"Credit","C":"Satisfactory","D":"Pass","F":"Fail"};
 var IC={dash:"M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z",profile:"M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 4-6 8-6s8 2 8 6",rec:"M2 9l10-5 10 5-10 5zM6 12v5c3 2 9 2 12 0v-5",reg:"M4 4h7v16H4zM13 4h7v16h-7z",time:"M4 5h16v16H4zM4 10h16M8 3v4M16 3v4",exam:"M6 3h12v18H6zM9 8h6M9 12h6M9 16h4",fin:"M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v10",msg:"M3 5h18v14H3zM3 6l9 7 9-7",lib:"M4 4h6c1 0 2 1 2 2v14c0-1-1-2-2-2H4zM20 4h-6c-1 0-2 1-2 2v14c0-1 1-2 2-2h6z",sup:"M4 14v-2a8 8 0 0116 0v2M4 14h3v5H4zM17 14h3v5h-3z"};
 var NAV=[["dash","Dashboard","dash"],["profile","My Profile","profile"],["rec","Academic Records","rec"],["results","Results","",1],["trans","Transcripts","",1],["reg","Course Registration","reg"],["time","Timetable","time"],["exam","Examinations","exam"],["fin","Finance","fin"],["msg","Messages","msg"],["lib","Library","lib"],["sup","Support","sup"]];
@@ -369,8 +479,8 @@ function aTimeView(){
       + '</select></label>'
       + '<label class="fld"><span>Start Time (e.g. 08:30)</span><input id="tt-start" value="' + esc(curSlot ? curSlot.start : '08:30') + '"></label>'
       + '<label class="fld"><span>End Time (e.g. 10:30)</span><input id="tt-end" value="' + esc(curSlot ? curSlot.end : '10:30') + '"></label>'
-      + '<label class="fld"><span>Course Code (e.g. OHS 101)</span><input id="tt-code" value="' + esc(curSlot ? curSlot.code : '') + '" placeholder="OHS 101"></label>'
-      + '<label class="fld"><span>Course Title</span><input id="tt-title" value="' + esc(curSlot ? curSlot.title : '') + '" placeholder="Introduction to OHS"></label>'
+      + '<label class="fld"><span>Course Code (e.g. CYB 101)</span><input id="tt-code" value="' + esc(curSlot ? curSlot.code : '') + '" placeholder="CYB 101"></label>'
+      + '<label class="fld"><span>Course Title</span><input id="tt-title" value="' + esc(curSlot ? curSlot.title : '') + '" placeholder="Introduction to Cybersecurity"></label>'
       + '<label class="fld"><span>Venue / Room</span><input id="tt-room" value="' + esc(curSlot ? curSlot.room : '') + '" placeholder="Lecture Hall A"></label>'
       + '<label class="fld"><span>Lecturer / Instructor</span><input id="tt-lec" value="' + esc(curSlot ? curSlot.lecturer : '') + '" placeholder="Dr. E. Mensah"></label>'
       + '<label class="fld"><span>Credit Hours</span><input id="tt-cr" type="number" value="' + (curSlot ? curSlot.cr : 3) + '"></label>'
@@ -429,16 +539,28 @@ function aTimeView(){
 function aCoursesView(){
   var fl = flash ? '<div class="flash">' + esc(flash) + '</div>' : "";
   var form = '';
-  if(editing === "course-new"){
-    form = '<div class="card"><h2>Add Course Offering to Catalog</h2><div class="form">'
-      + '<label class="fld"><span>Course Code (e.g. OHS 201)</span><input id="c-code" placeholder="OHS 201"></label>'
-      + '<label class="fld"><span>Course Title</span><input id="c-title" placeholder="Advanced Occupational Hygiene"></label>'
-      + '<label class="fld"><span>Credit Hours</span><input id="c-cr" type="number" value="3"></label>'
-      + '<label class="fld"><span>Level</span><select id="c-level"><option>100</option><option>200</option><option>300</option><option>400</option></select></label>'
-      + '<label class="fld"><span>Semester</span><select id="c-sem"><option>Semester 1</option><option>Semester 2</option><option>Semester 3</option></select></label>'
-      + '<label class="fld"><span>Course Type</span><select id="c-type"><option>Core</option><option>Elective</option><option>Mandatory</option></select></label>'
-      + '<label class="fld"><span>Department / Faculty</span><input id="c-dept" value="Faculty of Health Sciences"></label>'
-      + '</div><div class="bt"><button class="btn" id="save-course">Save Course Offering</button><button class="btn alt" id="cancel">Cancel</button></div></div>';
+  var isEdit = editing && typeof editing === "string" && editing.indexOf("course-edit-") === 0;
+  if(editing === "course-new" || isEdit){
+    var curCode = isEdit ? editing.replace("course-edit-", "") : "";
+    var curC = isEdit ? courses.filter(function(x){ return x.code === curCode; })[0] : null;
+    form = '<div class="card"><h2>' + (isEdit ? 'Edit Course Offering (' + esc(curCode) + ')' : 'Add Course Offering to Catalog') + '</h2><div class="form">'
+      + '<label class="fld"><span>Course Code (e.g. CYB 101, ART 101)</span><input id="c-code" value="' + esc(curC ? curC.code : '') + '" placeholder="CYB 101"></label>'
+      + '<label class="fld"><span>Course Title</span><input id="c-title" value="' + esc(curC ? curC.title : '') + '" placeholder="Introduction to Cybersecurity"></label>'
+      + '<label class="fld"><span>Credit Hours</span><input id="c-cr" type="number" value="' + (curC ? curC.cr : 3) + '"></label>'
+      + '<label class="fld"><span>Level</span><select id="c-level">'
+      + ['100', '200', '300', '400'].map(function(lv){ return '<option' + (curC && curC.level === lv ? ' selected' : '') + '>' + lv + '</option>'; }).join("")
+      + '</select></label>'
+      + '<label class="fld"><span>Semester</span><select id="c-sem">'
+      + ['Year 1 - Semester 1', 'Year 1 - Semester 2', 'Year 2 - Semester 1', 'Year 2 - Semester 2', 'Year 3 - Semester 1', 'Year 3 - Semester 2'].map(function(sm){
+        var isSel = curC && (curC.sem === sm || curC.sem.toLowerCase() === sm.toLowerCase() || (curC.sem.indexOf(sm.split(' - ')[1]) !== -1 && curC.level === sm.match(/\d/)[0] + '00'));
+        return '<option' + (isSel ? ' selected' : '') + '>' + sm + '</option>';
+      }).join("")
+      + '</select></label>'
+      + '<label class="fld"><span>Course Type</span><select id="c-type">'
+      + ['Core', 'Elective', 'Mandatory'].map(function(tp){ return '<option' + (curC && curC.type === tp ? ' selected' : '') + '>' + tp + '</option>'; }).join("")
+      + '</select></label>'
+      + '<label class="fld"><span>Department / Faculty</span><input id="c-dept" value="' + esc(curC ? curC.dept : 'Department of Cybersecurity & AI') + '"></label>'
+      + '</div><div class="bt"><button class="btn" id="' + (isEdit ? 'update-course' : 'save-course') + '">' + (isEdit ? 'Save Changes' : 'Save Course Offering') + '</button><button class="btn alt" id="cancel">Cancel</button></div></div>';
   }
 
   // Active student for interactive student-like registration view
@@ -470,7 +592,7 @@ function aCoursesView(){
 
   var studentInteractiveSection = '';
   if(activeStu){
-    var sRegs = regAll[activeStu.sid] || (activeStu.sid === "EGI_2024_02486" ? ["OHS 101", "OHS 103", "OHS 105", "OHS 107", "GNS 101"] : []);
+    var sRegs = regAll[activeStu.sid] || (activeStu.sid === "EGI_2024_02486" ? ["CYB 101", "ART 101", "CSC 101", "CYB 103", "MAT 101", "GNS 101"] : []);
     var myCourses = courses.filter(function(c){ return sRegs.indexOf(c.code) !== -1; });
     var totalCr = myCourses.reduce(function(acc, c){ return acc + (c.cr||0); }, 0);
     var unregCourses = courses.filter(function(c){ return sRegs.indexOf(c.code) === -1; });
@@ -510,18 +632,18 @@ function aCoursesView(){
   var regOverview = '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>All Students Registration Status</h3></div>'
     + (stu.length ? '<div class="wrap"><table><thead><tr><th>Student Name</th><th>Student ID</th><th>Programme</th><th>Level</th><th>Registered Courses</th><th>Credits</th><th class="no-print" style="text-align:right">Actions</th></tr></thead><tbody>'
       + stu.map(function(s){
-        var myRegs = regAll[s.sid] || (s.sid === "EGI_2024_02486" ? ["OHS 101", "OHS 103", "OHS 105", "OHS 107", "GNS 101"] : []);
+        var myRegs = regAll[s.sid] || (s.sid === "EGI_2024_02486" ? ["CYB 101", "ART 101", "CSC 101", "CYB 103", "MAT 101", "GNS 101"] : []);
         var myCr = courses.filter(function(c){ return myRegs.indexOf(c.code) !== -1; }).reduce(function(acc, c){ return acc + (c.cr||0); }, 0);
         return '<tr><td><b>' + esc(s.name) + '</b></td><td>' + esc(s.id) + '</td><td>' + esc(s.prog) + '</td><td>' + esc(s.level) + '</td><td><b>' + myRegs.length + ' courses</b><div style="font-size:11px;color:var(--mute)">' + esc(myRegs.join(", ") || 'None') + '</div></td><td><b>' + myCr + ' Cr.Hrs</b></td><td class="no-print" style="text-align:right;white-space:nowrap"><button class="mini" data-sel-reg="' + esc(s.sid) + '">Select</button> <button class="mini" data-dl-admin-reg="' + esc(s.sid) + '">Slip</button></td></tr>';
       }).join("")
       + '</tbody></table></div>' : '<div class="empty"><b>No students enrolled yet</b></div>')
     + '</div>';
 
-  // Catalog Table
+  // Catalog Table with Edit and Delete options
   var catalogTable = '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>Course Offerings Master Catalog</h3><button class="btn" id="a-new-course">+ Add Course Offering</button></div>'
-    + (courses.length ? '<div class="wrap"><table><thead><tr><th>Code</th><th>Course Title</th><th>Cr.Hrs</th><th>Level</th><th>Semester</th><th>Type</th><th>Department</th><th style="text-align:right">Action</th></tr></thead><tbody>'
+    + (courses.length ? '<div class="wrap"><table><thead><tr><th>Code</th><th>Course Title</th><th>Cr.Hrs</th><th>Level</th><th>Semester</th><th>Type</th><th>Department</th><th class="no-print" style="text-align:right">Actions</th></tr></thead><tbody>'
       + courses.map(function(c){
-        return '<tr><td><b>' + esc(c.code) + '</b></td><td>' + esc(c.title) + '</td><td>' + (c.cr||3) + '</td><td>' + esc(c.level||'100') + '</td><td>' + esc(c.sem||'Semester 1') + '</td><td><span class="tag ' + (c.type==='Core'?'core':'elec') + '">' + esc(c.type||'Core') + '</span></td><td>' + esc(c.dept||'') + '</td><td style="text-align:right"><button class="mini" data-dcourse="' + esc(c.code) + '">Delete</button></td></tr>';
+        return '<tr><td><b>' + esc(c.code) + '</b></td><td>' + esc(c.title) + '</td><td>' + (c.cr||3) + '</td><td>' + esc(c.level||'100') + '</td><td>' + esc(c.sem||'Semester 1') + '</td><td><span class="tag ' + (c.type==='Core'?'core':'elec') + '">' + esc(c.type||'Core') + '</span></td><td>' + esc(c.dept||'') + '</td><td class="no-print" style="text-align:right;white-space:nowrap"><button class="mini" data-ecourse="' + esc(c.code) + '">Edit</button> <button class="mini" data-dcourse="' + esc(c.code) + '">Delete</button></td></tr>';
       }).join("")
       + '</tbody></table></div>' : '<div class="empty"><b>No courses in catalog</b>Click "+ Add Course Offering" to add courses.</div>')
     + '</div>';
@@ -567,32 +689,32 @@ return(flash?'<div class="flash">'+esc(flash)+'</div>':"")+'<div class="card"><h
 var isStaticHost = window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:';
 
 var DEFAULT_STUDENTS = [
-  { sid:"EGI_2024_02486", id:"EGI/2024/02486", name:"Ama Mensah", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 300", year:"2024/2025", code:"ACCESS2024", grades:{"OHS 101":"A","OHS 103":"B+","OHS 105":"A-","OHS 107":"A","GNS 101":"B+","OHS 102":"A","OHS 104":"B","OHS 106":"A-","OHS 108":"B+","ICT 101":"A"} },
-  { sid:"EGI_2024_02487", id:"EGI/2024/02487", name:"Wisdom Diaba", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"WD-2024", grades:{"OHS 101":"A","OHS 103":"B+","OHS 105":"A-","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02488", id:"EGI/2024/02488", name:"Daniella Ewenam Agbemavor", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"DA-2024", grades:{"OHS 101":"A-","OHS 103":"A","OHS 105":"B+","OHS 107":"A","GNS 101":"A"} },
-  { sid:"EGI_2024_02489", id:"EGI/2024/02489", name:"Ayornu Kefa", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"AK-2024", grades:{"OHS 101":"B+","OHS 103":"B","OHS 105":"B+","OHS 107":"A-","GNS 101":"B+"} },
-  { sid:"EGI_2024_02490", id:"EGI/2024/02490", name:"Jessica Yayra Wowui", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"JW-2024", grades:{"OHS 101":"A","OHS 103":"A-","OHS 105":"A","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02491", id:"EGI/2024/02491", name:"Augustina Tetteh", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"AT-2024", grades:{"OHS 101":"B+","OHS 103":"B+","OHS 105":"A-","OHS 107":"A-","GNS 101":"B"} },
-  { sid:"EGI_2024_02492", id:"EGI/2024/02492", name:"J.R Gabriel Mawuko", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"JM-2024", grades:{"OHS 101":"A","OHS 103":"B+","OHS 105":"B+","OHS 107":"A","GNS 101":"A-"} },
-  { sid:"EGI_2024_02493", id:"EGI/2024/02493", name:"Raymond Deku", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"RD-2024", grades:{"OHS 101":"B+","OHS 103":"A-","OHS 105":"B+","OHS 107":"B+","GNS 101":"B+"} },
-  { sid:"EGI_2024_02494", id:"EGI/2024/02494", name:"Hudu Sumaila", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"HS-2024", grades:{"OHS 101":"A-","OHS 103":"B+","OHS 105":"A","OHS 107":"A-","GNS 101":"B+"} },
-  { sid:"EGI_2024_02495", id:"EGI/2024/02495", name:"Mathias Kelvin Dzamesi", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"MD-2024", grades:{"OHS 101":"A","OHS 103":"A","OHS 105":"A-","OHS 107":"A","GNS 101":"A-"} },
-  { sid:"EGI_2024_02496", id:"EGI/2024/02496", name:"Philip Acquah", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"PA-2024", grades:{"OHS 101":"B+","OHS 103":"B","OHS 105":"B+","OHS 107":"A-","GNS 101":"B"} },
-  { sid:"EGI_2024_02497", id:"EGI/2024/02497", name:"Kingsley Otto", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"KO-2024", grades:{"OHS 101":"A-","OHS 103":"B+","OHS 105":"B+","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02498", id:"EGI/2024/02498", name:"Stephen Amoh", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"SA-2024", grades:{"OHS 101":"B+","OHS 103":"B+","OHS 105":"A-","OHS 107":"A-","GNS 101":"A-"} },
-  { sid:"EGI_2024_02499", id:"EGI/2024/02499", name:"Rahina Narteynorh", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"RN-2024", grades:{"OHS 101":"A","OHS 103":"A-","OHS 105":"A","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02500", id:"EGI/2024/02500", name:"Benjamin Dadzie", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"BD-2024", grades:{"OHS 101":"B+","OHS 103":"B","OHS 105":"B+","OHS 107":"B+","GNS 101":"B"} },
-  { sid:"EGI_2024_02501", id:"EGI/2024/02501", name:"Abdul Razak", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"AR-2024", grades:{"OHS 101":"A-","OHS 103":"B+","OHS 105":"A-","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02502", id:"EGI/2024/02502", name:"Emmanuel Addo Adjei", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"EA-2024", grades:{"OHS 101":"B+","OHS 103":"B+","OHS 105":"A-","OHS 107":"A-","GNS 101":"B+"} },
-  { sid:"EGI_2024_02503", id:"EGI/2024/02503", name:"Christabel Tetteh", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"CT-2024", grades:{"OHS 101":"A","OHS 103":"A","OHS 105":"A-","OHS 107":"A","GNS 101":"A-"} },
-  { sid:"EGI_2024_02504", id:"EGI/2024/02504", name:"Very Justice Essuman", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"VJ-2024", grades:{"OHS 101":"A","OHS 103":"A","OHS 105":"A","OHS 107":"A","GNS 101":"A"} },
-  { sid:"EGI_2024_02505", id:"EGI/2024/02505", name:"Philip Ampomah", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"PM-2024", grades:{"OHS 101":"B+","OHS 103":"B+","OHS 105":"B","OHS 107":"A-","GNS 101":"B+"} },
-  { sid:"EGI_2024_02506", id:"EGI/2024/02506", name:"Emmanuel Mensah", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"EM-2024", grades:{"OHS 101":"A-","OHS 103":"B+","OHS 105":"A-","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02507", id:"EGI/2024/02507", name:"Rita Kponyo", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"RK-2024", grades:{"OHS 101":"A","OHS 103":"A-","OHS 105":"A","OHS 107":"A","GNS 101":"A-"} },
-  { sid:"EGI_2024_02508", id:"EGI/2024/02508", name:"Enoch Togoli", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"ET-2024", grades:{"OHS 101":"B+","OHS 103":"B+","OHS 105":"A-","OHS 107":"A-","GNS 101":"B+"} },
-  { sid:"EGI_2024_02509", id:"EGI/2024/02509", name:"Kenneth Avalon", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"KA-2024", grades:{"OHS 101":"A","OHS 103":"B+","OHS 105":"A-","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02510", id:"EGI/2024/02510", name:"Ebenezer Eshun Mensah Anokye", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"EA-2025", grades:{"OHS 101":"A","OHS 103":"A-","OHS 105":"A","OHS 107":"A","GNS 101":"B+"} },
-  { sid:"EGI_2024_02511", id:"EGI/2024/02511", name:"Michael Nyameke", prog:"BSc Occupational Health and Safety", dept:"Faculty of Health Sciences", level:"Level 100", year:"2024/2025", code:"MN-2024", grades:{"OHS 101":"A-","OHS 103":"B+","OHS 105":"A","OHS 107":"A","GNS 101":"A"} }
+  { sid:"EGI_2024_02486", id:"EGI/2024/02486", name:"Effah Emmanuella", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 300", year:"2024/2025", code:"ACCESS2024", grades:{"CYB 101":"A","ART 101":"A","CSC 101":"A","CYB 103":"A-","MAT 101":"A","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A-","CSC 102":"A","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A","CYB 203":"A-","CSC 201":"A","MAT 201":"A","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A","CSC 202":"A-","CYB 204":"A","GNS 202":"A","CYB 301":"A","ART 301":"A","CYB 303":"A-","ART 303":"A","CSC 301":"A","CYB 305":"A","CYB 302":"A","ART 302":"A","CYB 304":"A","ART 304":"A-","CYB 306":"A","GNS 302":"A"} },
+  { sid:"EGI_2024_02487", id:"EGI/2024/02487", name:"Wisdom Diaba", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"WD-2024", grades:{"CYB 101":"A","ART 101":"B+","CSC 101":"A-","CYB 103":"A","MAT 101":"B+","GNS 101":"A-","ART 102":"A","CYB 102":"B+","CYB 104":"A-","CSC 102":"A","CYB 106":"B+","GNS 102":"A","CYB 201":"A-","ART 201":"B+","CYB 203":"A","CSC 201":"A","MAT 201":"B+","CYB 205":"A-","ART 202":"A","CYB 202":"B+","ART 204":"A-","CSC 202":"A","CYB 204":"B+","GNS 202":"A"} },
+  { sid:"EGI_2024_02488", id:"EGI/2024/02488", name:"Daniella Ewenam Agbemavor", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"DA-2024", grades:{"CYB 101":"A-","ART 101":"A","CSC 101":"B+","CYB 103":"A","MAT 101":"A","GNS 101":"A","ART 102":"A","CYB 102":"A-","CYB 104":"A","CSC 102":"B+","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A","CYB 203":"A-","CSC 201":"B+","MAT 201":"A","CYB 205":"A","ART 202":"A-","CYB 202":"A","ART 204":"A","CSC 202":"A","CYB 204":"A-","GNS 202":"A"} },
+  { sid:"EGI_2024_02489", id:"EGI/2024/02489", name:"Ayornu Kefa", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"AK-2024", grades:{"CYB 101":"B+","ART 101":"B","CSC 101":"B+","CYB 103":"A-","MAT 101":"B+","GNS 101":"A-","ART 102":"B+","CYB 102":"B","CYB 104":"B+","CSC 102":"A-","CYB 106":"B+","GNS 102":"B"} },
+  { sid:"EGI_2024_02490", id:"EGI/2024/02490", name:"Jessica Yayra Wowui", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"JW-2024", grades:{"CYB 101":"A","ART 101":"A-","CSC 101":"A","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A-","CSC 102":"A","CYB 106":"A","GNS 102":"A-","CYB 201":"A","ART 201":"A-","CYB 203":"A","CSC 201":"A","MAT 201":"A-","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A-","CSC 202":"A","CYB 204":"A","GNS 202":"A"} },
+  { sid:"EGI_2024_02491", id:"EGI/2024/02491", name:"Augustina Tetteh", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"AT-2024", grades:{"CYB 101":"B+","ART 101":"B+","CSC 101":"A-","CYB 103":"A-","MAT 101":"B","GNS 101":"B+","ART 102":"B+","CYB 102":"B+","CYB 104":"A-","CSC 102":"A-","CYB 106":"B","GNS 102":"B+"} },
+  { sid:"EGI_2024_02492", id:"EGI/2024/02492", name:"J.R Gabriel Mawuko", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"JM-2024", grades:{"CYB 101":"A","ART 101":"B+","CSC 101":"B+","CYB 103":"A","MAT 101":"A-","GNS 101":"A","ART 102":"A-","CYB 102":"B+","CYB 104":"A","CSC 102":"B+","CYB 106":"A","GNS 102":"A-","CYB 201":"A","ART 201":"B+","CYB 203":"B+","CSC 201":"A","MAT 201":"A-","CYB 205":"A","ART 202":"B+","CYB 202":"A","ART 204":"A","CSC 202":"B+","CYB 204":"A-","GNS 202":"A"} },
+  { sid:"EGI_2024_02493", id:"EGI/2024/02493", name:"Raymond Deku", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"RD-2024", grades:{"CYB 101":"B+","ART 101":"A-","CSC 101":"B+","CYB 103":"B+","MAT 101":"B+","GNS 101":"A-","ART 102":"B+","CYB 102":"B+","CYB 104":"B+","CSC 102":"A-","CYB 106":"B+","GNS 102":"B+"} },
+  { sid:"EGI_2024_02494", id:"EGI/2024/02494", name:"Hudu Sumaila", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"HS-2024", grades:{"CYB 101":"A-","ART 101":"B+","CSC 101":"A","CYB 103":"A-","MAT 101":"B+","GNS 101":"A","ART 102":"A","CYB 102":"A-","CYB 104":"A-","CSC 102":"A","CYB 106":"B+","GNS 102":"A","CYB 201":"A-","ART 201":"B+","CYB 203":"A","CSC 201":"A-","MAT 201":"B+","CYB 205":"A-","ART 202":"A","CYB 202":"A-","ART 204":"B+","CSC 202":"A","CYB 204":"A-","GNS 202":"B+"} },
+  { sid:"EGI_2024_02495", id:"EGI/2024/02495", name:"Mathias Kelvin Dzamesi", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 300", year:"2024/2025", code:"MD-2024", grades:{"CYB 101":"A","ART 101":"A","CSC 101":"A-","CYB 103":"A","MAT 101":"A-","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A","CSC 102":"A-","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A-","CYB 203":"A","CSC 201":"A","MAT 201":"A","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A-","CSC 202":"A","CYB 204":"A","GNS 202":"A","CYB 301":"A","ART 301":"A","CYB 303":"A","ART 303":"A-","CSC 301":"A","CYB 305":"A","CYB 302":"A","ART 302":"A","CYB 304":"A","ART 304":"A","CYB 306":"A","GNS 302":"A"} },
+  { sid:"EGI_2024_02496", id:"EGI/2024/02496", name:"Philip Acquah", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"PA-2024", grades:{"CYB 101":"B+","ART 101":"B","CSC 101":"B+","CYB 103":"A-","MAT 101":"B","GNS 101":"B+","ART 102":"B+","CYB 102":"B","CYB 104":"B+","CSC 102":"A-","CYB 106":"B","GNS 102":"B"} },
+  { sid:"EGI_2024_02497", id:"EGI/2024/02497", name:"Kingsley Otto", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"KO-2024", grades:{"CYB 101":"A-","ART 101":"B+","CSC 101":"B+","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"B+","CYB 102":"A-","CYB 104":"A","CSC 102":"B+","CYB 106":"A","GNS 102":"A-","CYB 201":"A-","ART 201":"B+","CYB 203":"B+","CSC 201":"A","MAT 201":"B+","CYB 205":"A","ART 202":"A-","CYB 202":"A","ART 204":"B+","CSC 202":"A-","CYB 204":"B+","GNS 202":"A"} },
+  { sid:"EGI_2024_02498", id:"EGI/2024/02498", name:"Stephen Amoh", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"SA-2024", grades:{"CYB 101":"B+","ART 101":"B+","CSC 101":"A-","CYB 103":"A-","MAT 101":"A-","GNS 101":"B+","ART 102":"B+","CYB 102":"B+","CYB 104":"A-","CSC 102":"A-","CYB 106":"B+","GNS 102":"A-"} },
+  { sid:"EGI_2024_02499", id:"EGI/2024/02499", name:"Rahina Narteynorh", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 300", year:"2024/2025", code:"RN-2024", grades:{"CYB 101":"A","ART 101":"A-","CSC 101":"A","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A","CSC 102":"A-","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A","CYB 203":"A-","CSC 201":"A","MAT 201":"A-","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A","CSC 202":"A","CYB 204":"A-","GNS 202":"A","CYB 301":"A","ART 301":"A","CYB 303":"A","ART 303":"A","CSC 301":"A-","CYB 305":"A","CYB 302":"A","ART 302":"A","CYB 304":"A-","ART 304":"A","CYB 306":"A","GNS 302":"A"} },
+  { sid:"EGI_2024_02500", id:"EGI/2024/02500", name:"Benjamin Dadzie", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"BD-2024", grades:{"CYB 101":"B+","ART 101":"B","CSC 101":"B+","CYB 103":"B+","MAT 101":"B","GNS 101":"B+","ART 102":"B","CYB 102":"B+","CYB 104":"B","CSC 102":"B+","CYB 106":"B","GNS 102":"B"} },
+  { sid:"EGI_2024_02501", id:"EGI/2024/02501", name:"Abdul Razak", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"AR-2024", grades:{"CYB 101":"A-","ART 101":"B+","CSC 101":"A-","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"A","CYB 102":"A-","CYB 104":"A","CSC 102":"A-","CYB 106":"B+","GNS 102":"A","CYB 201":"A","ART 201":"B+","CYB 203":"A-","CSC 201":"A","MAT 201":"B+","CYB 205":"A","ART 202":"A-","CYB 202":"A","ART 204":"A","CSC 202":"B+","CYB 204":"A","GNS 202":"A"} },
+  { sid:"EGI_2024_02502", id:"EGI/2024/02502", name:"Emmanuel Addo Adjei", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"EA-2024", grades:{"CYB 101":"B+","ART 101":"B+","CSC 101":"A-","CYB 103":"A-","MAT 101":"B+","GNS 101":"B+","ART 102":"B+","CYB 102":"B+","CYB 104":"B+","CSC 102":"A-","CYB 106":"B+","GNS 102":"B"} },
+  { sid:"EGI_2024_02503", id:"EGI/2024/02503", name:"Christabel Tetteh", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 300", year:"2024/2025", code:"CT-2024", grades:{"CYB 101":"A","ART 101":"A","CSC 101":"A-","CYB 103":"A","MAT 101":"A-","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A-","CSC 102":"A","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A","CYB 203":"A","CSC 201":"A","MAT 201":"A-","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A","CSC 202":"A","CYB 204":"A","GNS 202":"A","CYB 301":"A","ART 301":"A","CYB 303":"A","ART 303":"A","CSC 301":"A","CYB 305":"A","CYB 302":"A","ART 302":"A","CYB 304":"A","ART 304":"A","CYB 306":"A","GNS 302":"A"} },
+  { sid:"EGI_2024_02504", id:"EGI/2024/02504", name:"Very Justice Essuman", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 300", year:"2024/2025", code:"VJ-2024", grades:{"CYB 101":"A","ART 101":"A","CSC 101":"A","CYB 103":"A","MAT 101":"A","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A","CSC 102":"A","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A","CYB 203":"A","CSC 201":"A","MAT 201":"A","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A","CSC 202":"A","CYB 204":"A","GNS 202":"A","CYB 301":"A","ART 301":"A","CYB 303":"A","ART 303":"A","CSC 301":"A","CYB 305":"A","CYB 302":"A","ART 302":"A","CYB 304":"A","ART 304":"A","CYB 306":"A","GNS 302":"A"} },
+  { sid:"EGI_2024_02505", id:"EGI/2024/02505", name:"Philip Ampomah", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"PM-2024", grades:{"CYB 101":"B+","ART 101":"B+","CSC 101":"B","CYB 103":"A-","MAT 101":"B+","GNS 101":"B+","ART 102":"B+","CYB 102":"B+","CYB 104":"B","CSC 102":"B+","CYB 106":"B","GNS 102":"B"} },
+  { sid:"EGI_2024_02506", id:"EGI/2024/02506", name:"Emmanuel Mensah", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"EM-2024", grades:{"CYB 101":"A-","ART 101":"B+","CSC 101":"A-","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"A-","CYB 102":"B+","CYB 104":"A","CSC 102":"B+","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"B+","CYB 203":"A-","CSC 201":"A","MAT 201":"B+","CYB 205":"A","ART 202":"A","CYB 202":"B+","ART 204":"A","CSC 202":"A-","CYB 204":"A","GNS 202":"A"} },
+  { sid:"EGI_2024_02507", id:"EGI/2024/02507", name:"Rita Kponyo", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 300", year:"2024/2025", code:"RK-2024", grades:{"CYB 101":"A","ART 101":"A-","CSC 101":"A","CYB 103":"A","MAT 101":"A-","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A","CSC 102":"A","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A","CYB 203":"A-","CSC 201":"A","MAT 201":"A","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A","CSC 202":"A","CYB 204":"A-","GNS 202":"A","CYB 301":"A","ART 301":"A","CYB 303":"A","ART 303":"A","CSC 301":"A","CYB 305":"A","CYB 302":"A","ART 302":"A","CYB 304":"A","ART 304":"A","CYB 306":"A","GNS 302":"A"} },
+  { sid:"EGI_2024_02508", id:"EGI/2024/02508", name:"Enoch Togoli", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 100", year:"2024/2025", code:"ET-2024", grades:{"CYB 101":"B+","ART 101":"B+","CSC 101":"A-","CYB 103":"A-","MAT 101":"B+","GNS 101":"B+","ART 102":"B+","CYB 102":"B+","CYB 104":"B+","CSC 102":"A-","CYB 106":"B+","GNS 102":"B"} },
+  { sid:"EGI_2024_02509", id:"EGI/2024/02509", name:"Kenneth Avalon", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"KA-2024", grades:{"CYB 101":"A","ART 101":"B+","CSC 101":"A-","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"A","CYB 102":"A-","CYB 104":"A","CSC 102":"A-","CYB 106":"B+","GNS 102":"A","CYB 201":"A","ART 201":"B+","CYB 203":"A","CSC 201":"A-","MAT 201":"A-","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"B+","CSC 202":"A","CYB 204":"A-","GNS 202":"A"} },
+  { sid:"EGI_2024_02510", id:"EGI/2024/02510", name:"Ebenezer Eshun Mensah Anokye", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 300", year:"2024/2025", code:"EA-2025", grades:{"CYB 101":"A","ART 101":"A-","CSC 101":"A","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"A","CYB 102":"A","CYB 104":"A","CSC 102":"A-","CYB 106":"A","GNS 102":"A","CYB 201":"A","ART 201":"A","CYB 203":"A-","CSC 201":"A","MAT 201":"A-","CYB 205":"A","ART 202":"A","CYB 202":"A","ART 204":"A","CSC 202":"A","CYB 204":"A","GNS 202":"A","CYB 301":"A","ART 301":"A","CYB 303":"A","ART 303":"A","CSC 301":"A","CYB 305":"A","CYB 302":"A","ART 302":"A","CYB 304":"A","ART 304":"A","CYB 306":"A","GNS 302":"A"} },
+  { sid:"EGI_2024_02511", id:"EGI/2024/02511", name:"Michael Nyameke", prog:"BSc Cybersecurity and Artificial Intelligence", dept:"Department of Cybersecurity & Artificial Intelligence", level:"Level 200", year:"2024/2025", code:"MN-2024", grades:{"CYB 101":"A-","ART 101":"B+","CSC 101":"A","CYB 103":"A","MAT 101":"B+","GNS 101":"A","ART 102":"A","CYB 102":"A-","CYB 104":"A","CSC 102":"A","CYB 106":"B+","GNS 102":"A","CYB 201":"A","ART 201":"A-","CYB 203":"A","CSC 201":"A","MAT 201":"B+","CYB 205":"A","ART 202":"A","CYB 202":"A-","ART 204":"A","CSC 202":"A","CYB 204":"A-","GNS 202":"A"} }
 ];
 
 function getLocalData(){
@@ -610,29 +732,92 @@ function getLocalData(){
     }catch(e){}
   }
   var newsList=n?JSON.parse(n):[{
-    id:1,title:"Welcome to the 2024/2025 Academic Year",
-    body:"Semester examinations will commence as scheduled. Ensure all course registrations and fees are cleared.",ts:Date.now()-3600000
+    id:1,title:"Welcome to the BSc Cybersecurity & Artificial Intelligence Programme",
+    body:"Full curriculum for Year 1, Year 2, and Year 3 across all 6 semesters has been officially published. Check the Course Catalog, Timetable, and verify registrations.",ts:Date.now()-3600000
   }];
-  var ttList=t?JSON.parse(t):[
-    { id:1, day:"Monday", start:"08:30", end:"10:30", code:"OHS 101", title:"Introduction to OHS", room:"Lecture Hall A", lecturer:"Dr. E. Mensah", cr:3 },
-    { id:2, day:"Monday", start:"11:00", end:"13:00", code:"GNS 101", title:"Use of English", room:"Arts Block 2", lecturer:"Mrs. S. Addo", cr:2 },
-    { id:3, day:"Tuesday", start:"09:00", end:"12:00", code:"OHS 103", title:"Hazard Identification and Risk Assessment", room:"Lab 3", lecturer:"Prof. K. Osei", cr:3 },
-    { id:4, day:"Wednesday", start:"10:00", end:"13:00", code:"OHS 105", title:"Safety Management Principles", room:"Lecture Hall B", lecturer:"Dr. A. Boateng", cr:3 },
-    { id:5, day:"Thursday", start:"08:30", end:"10:30", code:"OHS 107", title:"Communication Skills", room:"Seminar Room 1", lecturer:"Dr. F. Arthur", cr:2 },
-    { id:6, day:"Friday", start:"09:00", end:"12:00", code:"ICT 101", title:"Introduction to Information Technology", room:"Computer Lab 1", lecturer:"Mr. J. Appiah", cr:2 }
+  var defaultTt=[
+    { id:1, day:"Monday", start:"08:30", end:"10:30", code:"CYB 101", title:"Introduction to Cybersecurity", room:"Cyber Lab 1", lecturer:"Dr. K. Mensah", cr:3 },
+    { id:2, day:"Monday", start:"11:00", end:"13:00", code:"ART 101", title:"Fundamentals of Artificial Intelligence", room:"AI & Robotics Lab", lecturer:"Prof. E. Boateng", cr:3 },
+    { id:3, day:"Tuesday", start:"09:00", end:"12:00", code:"CSC 101", title:"Python Programming for AI & Security", room:"Software Studio A", lecturer:"Dr. F. Osei", cr:3 },
+    { id:4, day:"Wednesday", start:"09:00", end:"11:30", code:"CYB 103", title:"Computer Networks & Defense Fundamentals", room:"Network Security Lab", lecturer:"Dr. A. Addo", cr:3 },
+    { id:5, day:"Thursday", start:"08:30", end:"10:30", code:"MAT 101", title:"Discrete Mathematics for Computing", room:"Lecture Hall 3", lecturer:"Prof. S. Arthur", cr:3 },
+    { id:6, day:"Friday", start:"09:00", end:"11:00", code:"GNS 101", title:"Academic Writing & Communication Skills", room:"Seminar Room 2", lecturer:"Mrs. R. Kponyo", cr:2 },
+    { id:7, day:"Monday", start:"14:00", end:"16:00", code:"CYB 201", title:"Web Application Security & Pen Testing", room:"Cyber Lab 2", lecturer:"Dr. S. K. Gyasi", cr:3 },
+    { id:8, day:"Tuesday", start:"13:00", end:"15:30", code:"ART 201", title:"Deep Learning & Computer Vision", room:"AI & Robotics Lab", lecturer:"Prof. E. Boateng", cr:3 },
+    { id:9, day:"Wednesday", start:"12:00", end:"14:30", code:"CYB 203", title:"Digital Forensics & Incident Response", room:"Forensics Investigation Suite", lecturer:"Dr. K. Mensah", cr:3 },
+    { id:10, day:"Thursday", start:"11:00", end:"13:30", code:"CSC 201", title:"Database Management & SQL Security", room:"Software Studio B", lecturer:"Dr. F. Osei", cr:3 },
+    { id:11, day:"Friday", start:"11:30", end:"13:30", code:"CYB 205", title:"Wireless & IoT Network Security", room:"IoT Security Lab", lecturer:"Dr. A. Addo", cr:2 },
+    { id:12, day:"Monday", start:"16:30", end:"18:30", code:"CYB 301", title:"Enterprise Security Architecture & Zero Trust", room:"Executive Seminar Hall", lecturer:"Prof. Kwabena Asante", cr:3 },
+    { id:13, day:"Tuesday", start:"16:00", end:"18:30", code:"ART 301", title:"Reinforcement Learning & Autonomous Agents", room:"AI & Robotics Lab", lecturer:"Prof. E. Boateng", cr:3 },
+    { id:14, day:"Wednesday", start:"15:00", end:"17:30", code:"CYB 303", title:"Critical Infrastructure & SCADA Security", room:"Cyber Range 1", lecturer:"Dr. S. K. Gyasi", cr:3 },
+    { id:15, day:"Thursday", start:"14:30", end:"17:00", code:"ART 303", title:"Generative AI & Adversarial Robustness", room:"Software Studio A", lecturer:"Prof. E. Boateng", cr:3 },
+    { id:16, day:"Friday", start:"14:30", end:"17:00", code:"CYB 305", title:"Applied Research Methods in Cyber & AI", room:"Auditorium A", lecturer:"Prof. Kwabena Asante", cr:2 }
   ];
-  var courseList=c?JSON.parse(c):[
-    { code:"OHS 101", title:"Introduction to OHS", cr:3, level:"100", sem:"Semester 1", type:"Core", dept:"Faculty of Health Sciences" },
-    { code:"OHS 103", title:"Hazard Identification and Risk Assessment", cr:3, level:"100", sem:"Semester 1", type:"Core", dept:"Faculty of Health Sciences" },
-    { code:"OHS 105", title:"Safety Management Principles", cr:3, level:"100", sem:"Semester 1", type:"Core", dept:"Faculty of Health Sciences" },
-    { code:"OHS 107", title:"Communication Skills", cr:2, level:"100", sem:"Semester 1", type:"Core", dept:"Faculty of Health Sciences" },
-    { code:"GNS 101", title:"Use of English", cr:2, level:"100", sem:"Semester 1", type:"Mandatory", dept:"General Studies" },
-    { code:"OHS 109", title:"Fire Safety and Emergency Response", cr:3, level:"100", sem:"Semester 1", type:"Elective", dept:"Faculty of Health Sciences" },
-    { code:"OHS 111", title:"Industrial Safety Management", cr:3, level:"100", sem:"Semester 1", type:"Elective", dept:"Faculty of Health Sciences" },
-    { code:"ICT 101", title:"Introduction to Information Technology", cr:2, level:"100", sem:"Semester 1", type:"Mandatory", dept:"Computer Science" }
+  var ttList=defaultTt.slice();
+  if(t){
+    try{
+      var parsedT=JSON.parse(t);
+      if(Array.isArray(parsedT)&&parsedT.length>=defaultTt.length){ttList=parsedT}
+    }catch(e){}
+  }
+  var defaultCourses=[
+    // Year 1 - Semester 1
+    { code:"CYB 101", title:"Introduction to Cybersecurity", cr:3, level:"100", sem:"Year 1 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"ART 101", title:"Fundamentals of Artificial Intelligence", cr:3, level:"100", sem:"Year 1 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CSC 101", title:"Python Programming for AI & Security", cr:3, level:"100", sem:"Year 1 - Semester 1", type:"Core", dept:"Department of Computer Science" },
+    { code:"CYB 103", title:"Computer Networks & Defense Fundamentals", cr:3, level:"100", sem:"Year 1 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"MAT 101", title:"Discrete Mathematics for Computing", cr:3, level:"100", sem:"Year 1 - Semester 1", type:"Core", dept:"Department of Mathematics" },
+    { code:"GNS 101", title:"Academic Writing & Communication Skills", cr:2, level:"100", sem:"Year 1 - Semester 1", type:"Mandatory", dept:"General Studies" },
+    // Year 1 - Semester 2
+    { code:"ART 102", title:"Machine Learning & Neural Foundations", cr:3, level:"100", sem:"Year 1 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CYB 102", title:"Ethical Hacking & Defensive Systems", cr:3, level:"100", sem:"Year 1 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CYB 104", title:"Applied Cryptography & Information Assurance", cr:3, level:"100", sem:"Year 1 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CSC 102", title:"Data Structures & Algorithms for AI", cr:3, level:"100", sem:"Year 1 - Semester 2", type:"Core", dept:"Department of Computer Science" },
+    { code:"CYB 106", title:"Linux Systems & Security Administration", cr:3, level:"100", sem:"Year 1 - Semester 2", type:"Elective", dept:"Department of Cybersecurity & AI" },
+    { code:"GNS 102", title:"Professional Ethics in AI & Cybersecurity", cr:2, level:"100", sem:"Year 1 - Semester 2", type:"Mandatory", dept:"General Studies" },
+    // Year 2 - Semester 1
+    { code:"CYB 201", title:"Web Application Security & Pen Testing", cr:3, level:"200", sem:"Year 2 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"ART 201", title:"Deep Learning & Computer Vision", cr:3, level:"200", sem:"Year 2 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CYB 203", title:"Digital Forensics & Incident Response", cr:3, level:"200", sem:"Year 2 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CSC 201", title:"Database Management & SQL Security", cr:3, level:"200", sem:"Year 2 - Semester 1", type:"Core", dept:"Department of Computer Science" },
+    { code:"MAT 201", title:"Linear Algebra & Statistics for AI", cr:3, level:"200", sem:"Year 2 - Semester 1", type:"Core", dept:"Department of Mathematics" },
+    { code:"CYB 205", title:"Wireless & IoT Network Security", cr:2, level:"200", sem:"Year 2 - Semester 1", type:"Elective", dept:"Department of Cybersecurity & AI" },
+    // Year 2 - Semester 2
+    { code:"ART 202", title:"Natural Language Processing & Large Language Models", cr:3, level:"200", sem:"Year 2 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CYB 202", title:"Cloud Security Architecture & DevSecOps", cr:3, level:"200", sem:"Year 2 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"ART 204", title:"AI-Powered Threat Detection & Analytics", cr:3, level:"200", sem:"Year 2 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CSC 202", title:"Secure Software Engineering & Code Auditing", cr:3, level:"200", sem:"Year 2 - Semester 2", type:"Core", dept:"Department of Computer Science" },
+    { code:"CYB 204", title:"Malware Analysis & Reverse Engineering", cr:3, level:"200", sem:"Year 2 - Semester 2", type:"Elective", dept:"Department of Cybersecurity & AI" },
+    { code:"GNS 202", title:"Cybersecurity Governance, Risk & Compliance", cr:2, level:"200", sem:"Year 2 - Semester 2", type:"Mandatory", dept:"General Studies" },
+    // Year 3 - Semester 1
+    { code:"CYB 301", title:"Enterprise Security Architecture & Zero Trust", cr:3, level:"300", sem:"Year 3 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"ART 301", title:"Reinforcement Learning & Autonomous Agents", cr:3, level:"300", sem:"Year 3 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CYB 303", title:"Critical Infrastructure & SCADA Security", cr:3, level:"300", sem:"Year 3 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"ART 303", title:"Generative AI & Adversarial Robustness", cr:3, level:"300", sem:"Year 3 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CSC 301", title:"Distributed Systems & Blockchain Security", cr:3, level:"300", sem:"Year 3 - Semester 1", type:"Core", dept:"Department of Computer Science" },
+    { code:"CYB 305", title:"Applied Research Methods in Cyber & AI", cr:2, level:"300", sem:"Year 3 - Semester 1", type:"Core", dept:"Department of Cybersecurity & AI" },
+    // Year 3 - Semester 2
+    { code:"CYB 302", title:"Capstone Project & Cyber Range Simulations", cr:3, level:"300", sem:"Year 3 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"ART 302", title:"AI Safety, Alignment & Explainable AI", cr:3, level:"300", sem:"Year 3 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CYB 304", title:"Red Team vs Blue Team Operations", cr:3, level:"300", sem:"Year 3 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"ART 304", title:"Edge AI & Embedded Threat Intelligence", cr:3, level:"300", sem:"Year 3 - Semester 2", type:"Core", dept:"Department of Cybersecurity & AI" },
+    { code:"CYB 306", title:"Identity & Access Management Engineering", cr:3, level:"300", sem:"Year 3 - Semester 2", type:"Elective", dept:"Department of Cybersecurity & AI" },
+    { code:"GNS 302", title:"Cyber Law, National Security & Policy", cr:2, level:"300", sem:"Year 3 - Semester 2", type:"Mandatory", dept:"General Studies" }
   ];
+  var courseList=defaultCourses.slice();
+  if(c){
+    try{
+      var parsedC=JSON.parse(c);
+      if(Array.isArray(parsedC)&&parsedC.length>=defaultCourses.length){courseList=parsedC}
+      else if(Array.isArray(parsedC)){
+        var cMap={};defaultCourses.forEach(function(dc){cMap[dc.code]=dc});
+        parsedC.forEach(function(pc){cMap[pc.code]=pc});
+        courseList=Object.keys(cMap).map(function(k){return cMap[k]});
+      }
+    }catch(e){}
+  }
   var defaultRegs={};
-  stus.forEach(function(st){defaultRegs[st.sid]=["OHS 101","OHS 103","OHS 105","OHS 107","GNS 101"]});
+  stus.forEach(function(st){defaultRegs[st.sid]=["CYB 101","ART 101","CSC 101","CYB 103","MAT 101","GNS 101"]});
   var regsObj=defaultRegs;
   if(r){
     try{
@@ -775,6 +960,30 @@ function localApi(m,u,b){
       saveLocalData(d);return{course:nc};
     }
   }
+  if(u.indexOf("/courses/")===0&&m==="PUT"){
+    var editCode=decodeURIComponent(u.split("/")[2]).toUpperCase();
+    var curIdx=-1;d.courses.forEach(function(c,i){if(c.code===editCode)curIdx=i});
+    if(curIdx>=0){
+      var updatedCode=String(b.code||editCode).toUpperCase();
+      var upC={code:updatedCode,title:b.title,cr:Number(b.cr)||3,level:b.level||'100',sem:b.sem||'Semester 1',type:b.type||'Core',dept:b.dept||'Department of Cybersecurity & AI'};
+      d.courses[curIdx]=upC;
+      if(updatedCode!==editCode){
+        d.timetable.forEach(function(t){if(t.code===editCode){t.code=updatedCode;t.title=upC.title;t.cr=upC.cr}});
+        for(var sKey in d.registrations){
+          var rList=d.registrations[sKey]||[];
+          var rIdx=rList.indexOf(editCode);
+          if(rIdx!==-1){rList[rIdx]=updatedCode;d.registrations[sKey]=rList}
+        }
+        d.students.forEach(function(st){
+          if(st.grades&&st.grades[editCode]!==undefined){
+            st.grades[updatedCode]=st.grades[editCode];
+            delete st.grades[editCode];
+          }
+        });
+      }
+      saveLocalData(d);return{ok:true,course:upC};
+    }
+  }
   if(u.indexOf("/courses/")===0&&m==="DELETE"){
     var delCode=u.split("/")[2].toUpperCase();
     d.courses=d.courses.filter(function(x){return x.code!==delCode});saveLocalData(d);return{ok:true};
@@ -783,7 +992,7 @@ function localApi(m,u,b){
     if(m==="GET"){
       var rSid=localStorage.getItem("portal_sid");
       var rAll=d.registrations||{};
-      return{registered:rAll[rSid]||["OHS 101","OHS 103","OHS 105","OHS 107","GNS 101"],registrations:rAll};
+      return{registered:rAll[rSid]||["CYB 101","ART 101","CSC 101","CYB 103","MAT 101","GNS 101"],registrations:rAll};
     }
     if(m==="POST"){
       d.registrations=d.registrations||{};
@@ -840,7 +1049,7 @@ async function aLogin(){msg("");if(!$("apw").value)return msg("Enter the adminis
 try{var r=await api("POST","/admin/login",{password:$("apw").value});if(r&&r.token)localStorage.setItem("portal_token",r.token);$("apw").value="";await boot()}catch(e){msg(e.message)}}
 async function boot(){var m=await api("GET","/me");role=m.role;sid=m.sid;view=role==="admin"?"students":"dash";editing=null;flash="";await refresh();clearInterval(timer);timer=setInterval(refresh,30000)}
 var timer;
-async function refresh(){try{if(role==="admin")stu=(await api("GET","/students")).students;else if(role==="student")me=(await api("GET","/student")).student;if(role){news=(await api("GET","/announcements")).items||[];tt=(await api("GET","/timetable")).items||[];courses=(await api("GET","/courses")).courses||[];if(role==="student"){var rg=await api("GET","/registrations");regCodes=rg.registered||[]}else if(role==="admin"){var rgA=await api("GET","/registrations");regAll=rgA.registrations||{}}}}catch(e){if(/session/i.test(e.message)){role=null;clearInterval(timer);localStorage.removeItem("portal_token");msg("Your session has expired. Please sign in again.")}}soft()}
+async function refresh(){try{if(role==="admin")stu=(await api("GET","/students")).students;else if(role==="student")me=(await api("GET","/student")).student;if(role){news=(await api("GET","/announcements")).items||[];tt=(await api("GET","/timetable")).items||[];courses=(await api("GET","/courses")).courses||[];syncSemsFromCourses();if(role==="student"){var rg=await api("GET","/registrations");regCodes=rg.registered||[]}else if(role==="admin"){var rgA=await api("GET","/registrations");regAll=rgA.registrations||{}}}}catch(e){if(/session/i.test(e.message)){role=null;clearInterval(timer);localStorage.removeItem("portal_token");msg("Your session has expired. Please sign in again.")}}soft()}
 function soft(){var a=document.activeElement;if(role&&a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;if(role==="admin"&&editing!==null)return;render()}
 async function logout(){try{await api("POST","/logout")}catch(e){}localStorage.removeItem("portal_token");clearInterval(timer);role=null;sid=null;me=null;stu=[];news=[];editing=null;flash="";render()}
 function act(p,ok){return p.then(function(){flash=ok;return refresh()}).catch(function(e){flash="Failed: "+e.message;render()})}
@@ -900,19 +1109,19 @@ else if(d.reg){var cToReg=d.reg;if(regCodes.indexOf(cToReg)===-1){var updated=re
 else if(d.drop){var cToDrop=d.drop;var updated2=regCodes.filter(function(x){return x!==cToDrop});act(api("POST","/registrations",{codes:updated2}),"Dropped "+cToDrop+".")}
 else if(d.regFor){
   var pReg=d.regFor.split(":");var tSid=pReg[0],cCode=pReg[1];
-  var curList=(regAll[tSid]||(tSid==="EGI_2024_02486"?["OHS 101","OHS 103","OHS 105","OHS 107","GNS 101"]:[]));
+  var curList=(regAll[tSid]||(tSid==="EGI_2024_02486"?["CYB 101","ART 101","CSC 101","CYB 103","MAT 101","GNS 101"]:[]));
   if(curList.indexOf(cCode)===-1){var curListUpdated=curList.concat([cCode]);act(api("POST","/registrations",{sid:tSid,codes:curListUpdated}),"Registered "+cCode+" for student.")}
 }
 else if(d.dropFor){
   var pDrop=d.dropFor.split(":");var tSid2=pDrop[0],cCode2=pDrop[1];
-  var curList2=(regAll[tSid2]||(tSid2==="EGI_2024_02486"?["OHS 101","OHS 103","OHS 105","OHS 107","GNS 101"]:[]));
+  var curList2=(regAll[tSid2]||(tSid2==="EGI_2024_02486"?["CYB 101","ART 101","CSC 101","CYB 103","MAT 101","GNS 101"]:[]));
   var curListDropped=curList2.filter(function(x){return x!==cCode2});
   act(api("POST","/registrations",{sid:tSid2,codes:curListDropped}),"Dropped "+cCode2+" for student.")
 }
 else if(d.regCores){
   var tSid3=d.regCores;
   var coreCodes=courses.filter(function(c){return c.type==="Core"||c.type==="Mandatory"}).map(function(c){return c.code});
-  var curList3=(regAll[tSid3]||(tSid3==="EGI_2024_02486"?["OHS 101","OHS 103","OHS 105","OHS 107","GNS 101"]:[]));
+  var curList3=(regAll[tSid3]||(tSid3==="EGI_2024_02486"?["CYB 101","ART 101","CSC 101","CYB 103","MAT 101","GNS 101"]:[]));
   var curListMerged=curList3.slice();
   coreCodes.forEach(function(cc){if(curListMerged.indexOf(cc)===-1)curListMerged.push(cc)});
   act(api("POST","/registrations",{sid:tSid3,codes:curListMerged}),"Registered all core courses for student.")
@@ -927,17 +1136,23 @@ else if(d.selReg){adminRegSid=d.selReg;render();window.scrollTo(0,0)}
 else if(d.dlAdminReg){
   var tgtStu=stuBy(d.dlAdminReg);
   if(tgtStu){
-    var sRegs=regAll[tgtStu.sid]||(tgtStu.sid==="EGI_2024_02486"?["OHS 101","OHS 103","OHS 105","OHS 107","GNS 101"]:[]);
+    var sRegs=regAll[tgtStu.sid]||(tgtStu.sid==="EGI_2024_02486"?["CYB 101","ART 101","CSC 101","CYB 103","MAT 101","GNS 101"]:[]);
     var sCourses=courses.filter(function(c){return sRegs.indexOf(c.code)!==-1});
     downloadRegSlipDoc(tgtStu,sCourses);
   }
 }
 else if(d.dtt){if(confirm("Remove this timetable slot?"))act(api("DELETE","/timetable/"+d.dtt),"Timetable slot removed.")}
+else if(d.ecourse){editing="course-edit-"+d.ecourse;flash="";render();window.scrollTo(0,0)}
 else if(d.dcourse){if(confirm("Delete this course from catalog?"))act(api("DELETE","/courses/"+d.dcourse),"Course deleted.")}
 else if(i==="a-new-tt"){editing="tt-new";flash="";render()}
 else if(i==="a-new-course"){editing="course-new";flash="";render()}
+else if(i==="update-course"){
+  var oldC=editing.replace("course-edit-","");
+  var crsUpd={code:$("c-code").value.trim().toUpperCase(),title:$("c-title").value.trim(),cr:Number($("c-cr").value)||3,level:$("c-level").value,sem:$("c-sem").value,type:$("c-type").value,dept:$("c-dept").value.trim()||"Department of Cybersecurity & AI"};
+  if(!crsUpd.code||!crsUpd.title){flash="Course Code and Title are required.";render()}else{editing=null;act(api("PUT","/courses/"+encodeURIComponent(oldC),crsUpd),"Course "+crsUpd.code+" updated successfully!")}
+}
 else if(i==="save-tt"){var slot={day:$("tt-day").value,start:$("tt-start").value.trim(),end:$("tt-end").value.trim(),code:$("tt-code").value.trim().toUpperCase(),title:$("tt-title").value.trim(),room:$("tt-room").value.trim(),lecturer:$("tt-lec").value.trim(),cr:Number($("tt-cr").value)||3};if(!slot.code||!slot.day||!slot.start){flash="Day, Course Code, and Start Time are required.";render()}else{editing=null;act(api("POST","/timetable",slot),"Class slot published for all students!")}}
-else if(i==="save-course"){var crs={code:$("c-code").value.trim().toUpperCase(),title:$("c-title").value.trim(),cr:Number($("c-cr").value)||3,level:$("c-level").value,sem:$("c-sem").value,type:$("c-type").value,dept:$("c-dept").value.trim()};if(!crs.code||!crs.title){flash="Course Code and Title are required.";render()}else{editing=null;act(api("POST","/courses",crs),"Course added to registration catalog!")}}
+else if(i==="save-course"){var crs={code:$("c-code").value.trim().toUpperCase(),title:$("c-title").value.trim(),cr:Number($("c-cr").value)||3,level:$("c-level").value,sem:$("c-sem").value,type:$("c-type").value,dept:$("c-dept").value.trim()||"Department of Cybersecurity & AI"};if(!crs.code||!crs.title){flash="Course Code and Title are required.";render()}else{editing=null;act(api("POST","/courses",crs),"Course added to registration catalog!")}}
 else if(d.dl){
   if(d.dl==="res-html")downloadDoc(me,false);
   else if(d.dl==="trans-html")downloadDoc(me,true);
